@@ -1,0 +1,4 @@
+.local-ci/state/
+.runner-bundle/
+*.ndjson
+

@@ -1,0 +1,68 @@
+name: Runner demo
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  fail-then-resume:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.RUNNER_REPOSITORY_TOKEN }}
+      RUNNER_BUNDLE: ${{ runner.temp }}/runner-v0.6.0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Download the pinned Runner bundle
+        run: |
+          mkdir -p "$RUNNER_BUNDLE"
+          gh release download v0.6.0 \
+            --repo cajoy/runner \
+            --dir "$RUNNER_BUNDLE" \
+            --pattern checksums.txt \
+            --pattern manifest.json \
+            --pattern '*_linux_amd64'
+          cd "$RUNNER_BUNDLE"
+          awk '/_linux_amd64$/{print}' checksums.txt | shasum -a 256 -c -
+          chmod 755 runner_v0.6.0_linux_amd64
+
+      - name: Install the committed toolchain
+        run: |
+          "$RUNNER_BUNDLE/runner_v0.6.0_linux_amd64" toolchain install \
+            --project "$GITHUB_WORKSPACE" \
+            --source-dir "$RUNNER_BUNDLE" \
+            --json
+
+      - name: Fail once, then resume only unfinished work
+        shell: bash
+        run: |
+          set -euo pipefail
+          runner="$RUNNER_BUNDLE/runner_v0.6.0_linux_amd64"
+
+          ./scripts/set-result.sh fail
+          set +e
+          "$runner" run --project . --driver docker --json-stream hello:demo | tee first.ndjson
+          first_status=${PIPESTATUS[0]}
+          set -e
+          test "$first_status" -eq 1
+
+          parent_run=$(jq -r 'select(.run_id != null) | .run_id' first.ndjson | head -1)
+          test -n "$parent_run"
+
+          ./scripts/set-result.sh success
+          "$runner" run --project . --driver docker --resume "$parent_run" --json-stream hello:demo | tee resumed.ndjson
+
+          child_run=$(jq -r 'select(.run_id != null) | .run_id' resumed.ndjson | head -1)
+          receipt=".local-ci/state/runs/$child_run/receipt.json"
+          jq -e '.resume.reused_jobs == ["prepare", "test"] and .resume.executed_jobs == ["finish"]' "$receipt"
+
+      - name: Preserve local receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-receipts
+          path: .local-ci/state/runs/
+          if-no-files-found: error
