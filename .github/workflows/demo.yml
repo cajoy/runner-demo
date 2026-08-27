@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.RUNNER_REPOSITORY_TOKEN }}
-      RUNNER_BUNDLE: ${{ runner.temp }}/runner-v0.6.0
+      RUNNER_BUNDLE: ${{ github.workspace }}/.runner-bundle
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
