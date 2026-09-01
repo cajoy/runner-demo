@@ -17,9 +17,7 @@ tasks:
     display_name: deploy
     placement: local
     needs: [lint, unit, build]
-    run: >-
-      echo 'deploy from local is not implemented: production deploys run in CI' >&2;
-      exit 1
+    run: echo 'deploy to production is not supported from the local runner'
 
   deploy-github:
     display_name: deploy
