@@ -31,11 +31,16 @@ runner run --project . api:preflight
 
 `lint`, `unit`, and `build` run in parallel in the pinned container.
 
-Runner delegates to the release named in `.local-ci/toolchain.lock`, so this
-repository always runs the exact version it pins. Live rendering
-(`runner run --verbose`, which shows progress events and task output as they
-happen instead of a summary afterwards) arrives here once the lock names a
-release that carries it.
+To watch the run instead of reading a summary afterwards:
+
+```bash
+runner run --project . --verbose api:preflight
+```
+
+Verbose renders one badged line per progress event and interleaves each task's
+output beneath it, attributed to its task. Runner delegates to the release
+named in `.local-ci/toolchain.lock`, so this repository always runs the exact
+version it pins.
 
 Inspect what Runner resolved and where each value came from:
 

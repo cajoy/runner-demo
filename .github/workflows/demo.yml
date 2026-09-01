@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 env:
-  RUNNER_VERSION: v0.8.2
+  RUNNER_VERSION: v0.8.3
   RUNNER_BUNDLE: ${{ github.workspace }}/.runner-bundle
 
 jobs:

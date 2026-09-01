@@ -2,7 +2,6 @@ schema: local-ci/v2
 service: api
 default: preflight
 root: .
-profiles: [no-postgres]
 
 tasks:
   lint:
