@@ -2,3 +2,4 @@
 .local-ci-out/
 .runner-bundle/
 .runner-ci/
+/runner-portable-ci-demo

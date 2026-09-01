@@ -18,7 +18,7 @@ tasks:
     display_name: deploy
     placement: ci
     needs: [lint, unit, build]
-    run: ./tasks/deploy-hello.sh
+    run: mkdir -p .local-ci-out && echo 'hello from GitHub Runner' >.local-ci-out/deploy-hello.txt && cat .local-ci-out/deploy-hello.txt
 
 entrypoints:
   preflight: [lint, unit, build]
