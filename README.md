@@ -42,9 +42,25 @@ values, or logs. A dirty tree cannot be signed.
 
 ## In CI
 
+Receipts live in a notes ref, and an ordinary `git push` does not carry one.
+Either name it every time:
+
 ```bash
 git push --atomic origin HEAD refs/notes/runner-receipts
 ```
+
+or teach this clone to send and fetch it with every push, once:
+
+```bash
+git config --add remote.origin.push HEAD
+git config --add remote.origin.push refs/notes/runner-receipts
+git config --add remote.origin.fetch '+refs/notes/runner-receipts:refs/notes/runner-receipts'
+```
+
+A run is not signed by running it. `runner run` writes the receipt into
+`.local-ci/state/`, and `runner receipts attach` is what binds a signed copy to
+the commit. Push a commit whose receipt never left your laptop and CI correctly
+reports that it covers nothing.
 
 [`.github/workflows/demo.yml`](.github/workflows/demo.yml) always shows the
 same four steps. It reads the receipt for the pushed commit and skips what is
