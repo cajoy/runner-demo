@@ -1,165 +1,77 @@
 # Runner demo
 
-One repository, one CLI, one checked-in DAG, no scripts. This demo proves the
-behavior Runner exists for: **work verified on a laptop is not repeated in CI.**
-A local run signs a portable receipt bound to an exact commit. CI reads that
-receipt, skips every step it already covers, and goes straight to deploy.
+Work verified on a laptop is not repeated in CI.
+
+A local run signs a receipt bound to the exact commit. CI reads that receipt,
+skips every step it already covers, and goes straight to deploy.
+
+## The workflow
 
 ```
-                    lint ─┐    deploy-local     not implemented
-local laptop        unit ─┼─→
-(placement: any)   build ─┘    deploy-github    "deploy to production"
+lint ─┐
+unit ─┼─→ deploy-local     not implemented, deploys run in CI
+build ┘   deploy-github    "deploy to production"
 ```
 
-`deploy-local` and `deploy-github` are different tasks with different
-identities, so a local deploy receipt can never satisfy the CI deploy. Running
-`runner run --project . api:deploy` reaches the deploy step and stops there:
-deploying from a laptop is not implemented, and production deploys run in CI.
+Five tasks in [`.local-ci/api.yaml`](.local-ci/api.yaml). `lint`, `unit`, and
+`build` are independent and run in parallel. The two deploy tasks are separate
+identities, so a laptop can never produce evidence that stands in for a
+production deploy.
 
-Locally everything is a `runner` command. The whole repository is a Go module,
-five task definitions, a trust policy, and one 59-line workflow.
-
-| Path | Purpose |
-| --- | --- |
-| `.local-ci/api.yaml` | the four tasks and their entrypoints |
-| `.local-ci/runner.yaml` | driver, plugins, concurrency |
-| `.local-ci/toolchain.lock` | exact Runner, plugin, and runtime image versions |
-| `.runner/receipt-policy.yaml` | which signers CI trusts, for which tasks and platforms |
-| `.github/workflows/demo.yml` | one job: read the receipt, skip what it covers, deploy |
-
-## Run it locally
+## Locally
 
 ```bash
-runner run --project . api:preflight
+runner run --project . api:preflight            # lint, unit, build
+runner run --project . --verbose api:preflight  # watch it happen
+runner run --project . api:deploy               # stops: not implemented locally
+runner dashboard                                # http://127.0.0.1:7331/
 ```
 
-`lint`, `unit`, and `build` run in parallel in the pinned container.
-
-To watch the run instead of reading a summary afterwards:
-
-```bash
-runner run --project . --verbose api:preflight
-```
-
-Verbose renders one badged line per progress event and interleaves each task's
-output beneath it, attributed to its task. Runner delegates to the release
-named in `.local-ci/toolchain.lock`, so this repository always runs the exact
-version it pins.
-
-Inspect what Runner resolved and where each value came from:
-
-```bash
-runner config explain api --project .
-```
-
-## Sign the result and bind it to this commit
+Sign the result and bind it to this commit:
 
 ```bash
 runner receipts attach --project . --run <run-id> --commit HEAD \
   --signer local-alex --json
 ```
 
-On first use Runner creates the `local-alex` Ed25519 key in the login Keychain
-and prints its public key. The private terminal receipt stays in
-`.local-ci/state/runs/<run-id>/receipt.json`; the redacted, signed projection
-goes into `refs/notes/runner-receipts`. The portable copy carries repository,
-commit, tree, workflow, task digests, platform, producer, and outcome — never
-paths, commands, environment values, logs, or credentials.
+The first attach creates the `local-alex` Ed25519 key in your login Keychain.
+The full receipt stays in `.local-ci/state/runs/<run-id>/`; a redacted, signed
+copy goes into `refs/notes/runner-receipts`, carrying the commit, the workflow,
+task digests, platform, and outcome — never paths, commands, environment
+values, or logs. A dirty tree cannot be signed.
 
-A dirty working tree cannot produce a portable receipt. Reuse is bound to an
-exact commit.
-
-## Watch it
-
-```bash
-runner dashboard
-```
-
-Open <http://127.0.0.1:7331/>. Run detail shows each task's producer,
-placement, scheduling decision, platform, and digests.
-
-## Push, and let CI skip the verified work
+## In CI
 
 ```bash
 git push --atomic origin HEAD refs/notes/runner-receipts
 ```
 
-`.github/workflows/demo.yml` is one job that always shows the same four steps.
-It reads the receipt notes for the pushed commit, lists the tasks a passed
-receipt already covers, and then runs each step or skips it:
+[`.github/workflows/demo.yml`](.github/workflows/demo.yml) always shows the
+same four steps. It reads the receipt for the pushed commit and skips what is
+covered:
 
-```
-receipt   signed receipt covers: build lint unit
-lint      skipped: already verified for this commit
-unit      skipped: already verified for this commit
-build     skipped: already verified for this commit
-deploy    deploy to production
-```
+| | with a receipt | without one |
+| --- | --- | --- |
+| receipt | `covers: ["build","lint","unit"]` | `covers: []` |
+| lint | skipped | `go vet ./...` |
+| unit | skipped | `go test ./...` |
+| build | skipped | `go build` |
+| deploy | deploy to production | deploy to production |
 
-Push a commit with no receipt and the same workflow runs `go vet`, `go test`,
-and `go build` before deploying. The steps never change; only the work does.
+Push an ordinary commit to see the right-hand column, then attach a receipt to
+that same commit and re-run to see the left.
 
-The workflow needs no secrets and knows nothing about Runner: it reads the
-signed evidence with `git` and `jq`. It simulates verification by trusting the
-receipt's contents. Real trust is `runner ci plan`, which checks the Ed25519
-signature, the protected policy in `.runner/receipt-policy.yaml`, the task
-input digests, and the platform before reusing anything:
+The workflow needs no secrets and installs nothing: it reads the signed
+evidence with `git` and `jq`. It trusts the receipt's contents rather than
+checking the signature, which is the part a real deployment would not simulate.
 
-```bash
-runner ci plan api:github --project . --policy .runner/receipt-policy.yaml \
-  --branch main --fetch=false --output .runner-ci/plan.json --json
-```
+## Files
 
-## What to try next
+| Path | |
+| --- | --- |
+| `.local-ci/api.yaml` | the five tasks |
+| `.local-ci/runner.yaml` | driver, plugins, concurrency |
+| `.local-ci/toolchain.lock` | the exact Runner and runtime image this repository pins |
+| `.github/workflows/demo.yml` | 48 lines, no Runner |
 
-- **Nothing left to do.** Push again without changing anything. The CI receipt
-  from the previous run covers all four tasks, so `execute_count` is `0` and
-  zero task commands run — Runner still writes an evaluation receipt.
-- **Invalidate one task.** Change `main_test.go` and push. `unit` and its
-  dependent `deploy-github` execute; `lint` and `build` stay reused.
-- **Tamper with a receipt.** Edit the signed bytes in the notes ref. Planning
-  reports `receipt_integrity_conflict`, quarantines the candidate, and executes
-  the affected graph in CI instead of trusting it.
-- **Rehearse CI locally.** `runner ci plan api:github --project . --policy .runner/receipt-policy.yaml --branch main --fetch=false --output .runner-ci/plan.json --json`
-- **Read the remote evidence only.** `runner receipts fetch --project . --remote origin --commit HEAD --json`
-- **Inspect without executing.** `runner runs observe --project . --run <run-id> --json`
-
-## Setting this up from scratch
-
-Already done in this checkout; these are the steps if the repository or its
-signers ever move.
-
-1. Install the pinned toolchain:
-
-   ```bash
-   gh release download v0.8.2 --repo cajoy/runner --dir .runner-bundle
-   (cd .runner-bundle && shasum -a 256 -c checksums.txt)
-   runner toolchain install --project "$PWD" --source-dir "$PWD/.runner-bundle" --json
-   ```
-
-2. Mint the two signers. `receipts attach --signer local-alex` creates the
-   local key; the CI key is created the same way and its private half becomes
-   the `RUNNER_RECEIPT_SIGNING_KEY` Actions secret:
-
-   ```bash
-   security find-generic-password -a github -s cajoy.runner.receipt-signing -w |
-     gh secret set RUNNER_RECEIPT_SIGNING_KEY --repo cajoy/runner-demo
-   ```
-
-3. Put each signer's printed `public_key` into `.runner/receipt-policy.yaml`,
-   along with this repository's portable identity, which any plan reports:
-
-   ```bash
-   runner ci plan api:github --project . --policy .runner/receipt-policy.yaml \
-     --branch main --fetch=false --output .runner-ci/plan.json --json |
-     jq -r '.subject.repository_id'
-   ```
-
-   The identity is derived from the `origin` URL, so renaming the GitHub
-   repository invalidates the policy until it is updated.
-
-4. Commit the policy first, then run and attach. Receipts bind to the commit
-   that contains the policy that verifies them.
-
-CI also needs a read-only `RUNNER_REPOSITORY_TOKEN` secret to download release
-assets from the private `cajoy/runner` repository.
+`.local-ci/state/` holds runs, logs, and receipts, and is not tracked.

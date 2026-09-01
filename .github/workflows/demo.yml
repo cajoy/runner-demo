@@ -23,37 +23,26 @@ jobs:
         id: receipt
         run: |
           set -euo pipefail
-          verified=""
           git fetch --quiet origin \
             'refs/notes/runner-receipts:refs/notes/runner-receipts' 2>/dev/null || true
-          if note=$(git notes --ref=runner-receipts show "$GITHUB_SHA" 2>/dev/null); then
-            verified=$(printf '%s' "$note" | jq -r '
-              [.entries[].envelope.payload | @base64d | fromjson
-               | .tasks[] | select(.state == "passed") | .id] | unique | join(" ")')
-          fi
+          note=$(git notes --ref=runner-receipts show "$GITHUB_SHA" 2>/dev/null || echo '{}')
+          verified=$(printf '%s' "$note" | jq -c '
+            [(.entries // [])[].envelope.payload | @base64d | fromjson
+             | .tasks[] | select(.state == "passed") | .id] | unique')
           echo "verified=$verified" >>"$GITHUB_OUTPUT"
-          echo "signed receipt covers: ${verified:-nothing}"
+          echo "signed receipt covers: $verified"
 
       - name: lint
-        run: |
-          case " ${{ steps.receipt.outputs.verified }} " in
-            *" lint "*) echo "skipped: already verified for this commit" ;;
-            *) go vet ./... ;;
-          esac
+        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified), 'lint') }}
+        run: go vet ./...
 
       - name: unit
-        run: |
-          case " ${{ steps.receipt.outputs.verified }} " in
-            *" unit "*) echo "skipped: already verified for this commit" ;;
-            *) go test ./... ;;
-          esac
+        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified), 'unit') }}
+        run: go test ./...
 
       - name: build
-        run: |
-          case " ${{ steps.receipt.outputs.verified }} " in
-            *" build "*) echo "skipped: already verified for this commit" ;;
-            *) go build -trimpath -o /tmp/hello . ;;
-          esac
+        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified), 'build') }}
+        run: go build -trimpath -o /tmp/hello .
 
       - name: deploy
         run: echo "deploy to production"
