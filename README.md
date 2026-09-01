@@ -29,9 +29,13 @@ module, four task definitions, and a trust policy.
 runner run --project . api:preflight
 ```
 
-`lint`, `unit`, and `build` run in parallel in the pinned container. Add
-`--verbose` to watch progress events and task output as they happen instead of
-reading a summary afterwards.
+`lint`, `unit`, and `build` run in parallel in the pinned container.
+
+Runner delegates to the release named in `.local-ci/toolchain.lock`, so this
+repository always runs the exact version it pins. Live rendering
+(`runner run --verbose`, which shows progress events and task output as they
+happen instead of a summary afterwards) arrives here once the lock names a
+release that carries it.
 
 Inspect what Runner resolved and where each value came from:
 
