@@ -30,7 +30,22 @@ jobs:
             [(.entries // [])[].envelope.payload | @base64d | fromjson
              | .tasks[] | select(.state == "passed") | .id] | unique')
           echo "verified=$verified" >>"$GITHUB_OUTPUT"
-          echo "signed receipt covers: $verified"
+
+          # Git notes are invisible in the GitHub UI, so render the receipt here.
+          printf '%s' "$note" | jq -r '
+            if (.entries // []) == [] then
+              "## No receipt for this commit\n\nEvery step runs."
+            else
+              (.entries[0] as $e | ($e.envelope.payload | @base64d | fromjson) as $r |
+              "## Receipt \($e.receipt_digest[7:15])\n",
+              "| | |", "| --- | --- |",
+              "| signer | `\($e.envelope.signatures[0].keyid)` |",
+              "| produced | \($r.producer.placement) · Runner \($r.producer.runner) |",
+              "| commit | `\($r.subject.commit[0:12])` |",
+              "| workflow | \($r.workflow.service):\($r.workflow.entrypoint) |",
+              "| covers | \([$r.tasks[] | select(.state == "passed") | .id] | join(", ")) |",
+              "| platform | \($r.tasks[0].platform) |")
+            end' | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: lint
         if: ${{ !contains(fromJSON(steps.receipt.outputs.verified), 'lint') }}

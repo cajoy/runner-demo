@@ -77,6 +77,10 @@ covered:
 Push an ordinary commit to see the right-hand column, then attach a receipt to
 that same commit and re-run to see the left.
 
+GitHub's web UI does not render Git notes anywhere, so the workflow prints the
+receipt into the run's job summary: digest, signer, producer, commit, workflow,
+what it covers, and the platform it ran on.
+
 The workflow needs no secrets and installs nothing: it reads the signed
 evidence with `git` and `jq`. It trusts the receipt's contents rather than
 checking the signature, which is the part a real deployment would not simulate.
