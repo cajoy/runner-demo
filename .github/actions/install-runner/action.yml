@@ -1,0 +1,33 @@
+name: Install Runner
+description: Download the release bundle pinned by the committed toolchain lock and install it.
+
+inputs:
+  repository-token:
+    description: Read-only token for the private cajoy/runner release assets.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.repository-token }}
+      run: |
+        set -euo pipefail
+        version=$(jq -r '.runner.version' .local-ci/toolchain.lock)
+        mkdir -p "$RUNNER_BUNDLE"
+        gh release download "$version" \
+          --repo cajoy/runner \
+          --dir "$RUNNER_BUNDLE" \
+          --pattern checksums.txt \
+          --pattern manifest.json \
+          --pattern '*_linux_amd64' \
+          --clobber
+        cd "$RUNNER_BUNDLE"
+        awk '/_linux_amd64$/{print}' checksums.txt | shasum -a 256 -c -
+        chmod 755 "runner_${version}_linux_amd64"
+        cd "$GITHUB_WORKSPACE"
+        "$RUNNER_BUNDLE/runner_${version}_linux_amd64" toolchain install \
+          --project "$GITHUB_WORKSPACE" \
+          --source-dir "$RUNNER_BUNDLE" \
+          --json

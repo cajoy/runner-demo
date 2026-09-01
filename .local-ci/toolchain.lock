@@ -1,62 +1,94 @@
-schema: local-ci-toolchain-lock/v1
-runner:
-    repository: cajoy/runner
-    version: v0.7.0
-    commit: 13df8e93fc1d610b8876b9fb608a8c63c0ba4ed5
-    protocol: local-ci/v1
-    artifacts:
-        darwin-arm64:
-            file: runner_v0.7.0_darwin_arm64
-            sha256: ac922a6f71e80547a91e6b482dce0ac083d6305ed35ae0a0abbe4e3efed7b075
-        linux-amd64:
-            file: runner_v0.7.0_linux_amd64
-            sha256: 2e6cad99bb27e84a73907d96b58fcaf042cab23a5d01a1918b9961ef83c69425
-        linux-arm64:
-            file: runner_v0.7.0_linux_arm64
-            sha256: 85832c7adbc6c54cac8dd879d900e554bbf89bda678fd13bfe29820470124c46
-plugins:
-    kubernetes:
-        repository: cajoy/runner
-        version: v0.7.0
-        commit: 13df8e93fc1d610b8876b9fb608a8c63c0ba4ed5
-        protocol: runner-plugin/v1
-        artifacts:
-            darwin-arm64:
-                file: runner-plugin-kubernetes_v0.7.0_darwin_arm64
-                sha256: 85971dde60a3249c843cc1851486837cecf32eef1419b7c25d73c8b5b0f6dacf
-            linux-amd64:
-                file: runner-plugin-kubernetes_v0.7.0_linux_amd64
-                sha256: bc0f730ed8be20266d29139b1048d61d5d49639d98d6334911ec1eba9465cd8d
-            linux-arm64:
-                file: runner-plugin-kubernetes_v0.7.0_linux_arm64
-                sha256: 7273eaef771a1a4ff71ed8ebd0292e66517e913febf1ae0922b08bdbe6f9b798
-    local:
-        repository: cajoy/runner
-        version: v0.7.0
-        commit: 13df8e93fc1d610b8876b9fb608a8c63c0ba4ed5
-        protocol: runner-plugin/v1
-        artifacts:
-            darwin-arm64:
-                file: runner-plugin-local_v0.7.0_darwin_arm64
-                sha256: a9a8edead7adc43bfdfec88386c61badbbe06e9da09c008cb39c354c08494fde
-            linux-amd64:
-                file: runner-plugin-local_v0.7.0_linux_amd64
-                sha256: f2334a87f75d0240b110d1646acf8177c61ee05410a6a70c7d370b4f36760fd5
-            linux-arm64:
-                file: runner-plugin-local_v0.7.0_linux_arm64
-                sha256: 4b226b6fc65118f9c2129a855e179b63122828ae0a664fe9ca4f10234fe8561f
-    oci:
-        repository: cajoy/runner
-        version: v0.7.0
-        commit: 13df8e93fc1d610b8876b9fb608a8c63c0ba4ed5
-        protocol: runner-plugin/v1
-        artifacts:
-            darwin-arm64:
-                file: runner-plugin-oci_v0.7.0_darwin_arm64
-                sha256: 2df19fe765ce0727934bf676d383fd7aafa4be0b6304c74c81d37ad1e6359903
-            linux-amd64:
-                file: runner-plugin-oci_v0.7.0_linux_amd64
-                sha256: 36d8627e8dad5abb40497ec414cef16ef16d1d1c5a3217771fd7d98eade8eeb3
-            linux-arm64:
-                file: runner-plugin-oci_v0.7.0_linux_arm64
-                sha256: e8cca6dfef5c2f5cd56396583177bd4a89e60c8a62882807a82d3740c9173570
+{
+  "schema": "local-ci-toolchain-lock/v2",
+  "runner": {
+    "repository": "cajoy/runner",
+    "version": "v0.8.2",
+    "commit": "cfa1578d64833a58e11608b6785729ab850eaae6",
+    "protocol": "local-ci/v1",
+    "artifacts": {
+      "darwin-arm64": {
+        "file": "runner_v0.8.2_darwin_arm64",
+        "sha256": "8ec407326cd3c6c8e0d10b1a11614973b472924748dca5ce080378072a78239c"
+      },
+      "linux-amd64": {
+        "file": "runner_v0.8.2_linux_amd64",
+        "sha256": "4c3b6ffae9036c67144fcbb6f4c683f6d4de60cb1bc9284b7a0f0feb5a7823ba"
+      },
+      "linux-arm64": {
+        "file": "runner_v0.8.2_linux_arm64",
+        "sha256": "8f937d9b077db8e66ef99c7b55312ac267b754862975ab9103f25708b921db61"
+      }
+    }
+  },
+  "plugins": {
+    "kubernetes": {
+      "repository": "cajoy/runner",
+      "version": "v0.8.2",
+      "commit": "cfa1578d64833a58e11608b6785729ab850eaae6",
+      "protocol": "runner-plugin/v1",
+      "artifacts": {
+        "darwin-arm64": {
+          "file": "runner-plugin-kubernetes_v0.8.2_darwin_arm64",
+          "sha256": "271d928309d07e54c6fd218a82bf558be891e40e3234966d12de2393da5fb172"
+        },
+        "linux-amd64": {
+          "file": "runner-plugin-kubernetes_v0.8.2_linux_amd64",
+          "sha256": "d3fa1c4acca8bb9293040b6faface4281732b148da9fdfa4ad17798e27fe78d9"
+        },
+        "linux-arm64": {
+          "file": "runner-plugin-kubernetes_v0.8.2_linux_arm64",
+          "sha256": "97df314f6c082387f45a1b5df8d6bfb20559b56b684a567f1b7e6eae3f3a617a"
+        }
+      }
+    },
+    "local": {
+      "repository": "cajoy/runner",
+      "version": "v0.8.2",
+      "commit": "cfa1578d64833a58e11608b6785729ab850eaae6",
+      "protocol": "runner-plugin/v1",
+      "artifacts": {
+        "darwin-arm64": {
+          "file": "runner-plugin-local_v0.8.2_darwin_arm64",
+          "sha256": "dbc794da9f6413a55ee2aa98c077cd4b31f6b824dd034e2d4bf9135224b375ac"
+        },
+        "linux-amd64": {
+          "file": "runner-plugin-local_v0.8.2_linux_amd64",
+          "sha256": "63c64f005dc6e805bdad1cd37c84529617cb5c46bd66354a6dc3544d5c24a96d"
+        },
+        "linux-arm64": {
+          "file": "runner-plugin-local_v0.8.2_linux_arm64",
+          "sha256": "9813b18f631104efa74953338ee0e4060ceb4f621aae4883c4b4768e1c8bdbc6"
+        }
+      }
+    },
+    "oci": {
+      "repository": "cajoy/runner",
+      "version": "v0.8.2",
+      "commit": "cfa1578d64833a58e11608b6785729ab850eaae6",
+      "protocol": "runner-plugin/v1",
+      "artifacts": {
+        "darwin-arm64": {
+          "file": "runner-plugin-oci_v0.8.2_darwin_arm64",
+          "sha256": "41ce90957ea7e48d34e10169aa2dfb2a6f130ede398d6df89c923ec40e037980"
+        },
+        "linux-amd64": {
+          "file": "runner-plugin-oci_v0.8.2_linux_amd64",
+          "sha256": "ec426d5c25950cb792db145932c40868319c48817922b34481288c132fa31d06"
+        },
+        "linux-arm64": {
+          "file": "runner-plugin-oci_v0.8.2_linux_arm64",
+          "sha256": "d2543780c55496760bba210a251f3424137e6bea290115e6b2865f5cb515b937"
+        }
+      }
+    }
+  },
+  "profiles": {
+    "go": {
+      "versions": {
+        "1.26": {
+          "image": "golang:1.26.3-bookworm"
+        }
+      }
+    }
+  }
+}

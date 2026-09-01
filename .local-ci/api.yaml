@@ -1,0 +1,26 @@
+schema: local-ci/v2
+service: api
+default: preflight
+root: .
+profiles: [no-postgres]
+
+tasks:
+  lint:
+    run: go vet ./...
+
+  unit:
+    run: go test ./...
+
+  build:
+    run: mkdir -p .local-ci-out && go build -trimpath -o .local-ci-out/hello .
+
+  deploy-github:
+    display_name: deploy
+    placement: ci
+    needs: [lint, unit, build]
+    run: ./tasks/deploy-hello.sh
+
+entrypoints:
+  preflight: [lint, unit, build]
+  github: [deploy-github]
+
