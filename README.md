@@ -2,18 +2,22 @@
 
 One repository, one CLI, one checked-in DAG, no scripts. This demo proves the
 behavior Runner exists for: **work verified on a laptop is not repeated in CI.**
-A local run signs a portable receipt bound to an exact commit; GitHub Actions
-verifies that receipt against a protected policy, reuses the tasks it covers,
-and executes only what is left.
+A local run signs a portable receipt bound to an exact commit. CI reads that
+receipt, skips every step it already covers, and goes straight to deploy.
 
 ```
-                    lint ─┐
-local laptop        unit ─┼─→ deploy-github        GitHub Actions
-(placement: any)   build ─┘   (placement: ci)
+                    lint ─┐    deploy-local     not implemented
+local laptop        unit ─┼─→
+(placement: any)   build ─┘    deploy-github    "deploy to production"
 ```
 
-Everything the demo does is a `runner` command. The whole repository is a Go
-module, four task definitions, and a trust policy.
+`deploy-local` and `deploy-github` are different tasks with different
+identities, so a local deploy receipt can never satisfy the CI deploy. Running
+`runner run --project . api:deploy` reaches the deploy step and stops there:
+deploying from a laptop is not implemented, and production deploys run in CI.
+
+Locally everything is a `runner` command. The whole repository is a Go module,
+five task definitions, a trust policy, and one 59-line workflow.
 
 | Path | Purpose |
 | --- | --- |
@@ -21,7 +25,7 @@ module, four task definitions, and a trust policy.
 | `.local-ci/runner.yaml` | driver, plugins, concurrency |
 | `.local-ci/toolchain.lock` | exact Runner, plugin, and runtime image versions |
 | `.runner/receipt-policy.yaml` | which signers CI trusts, for which tasks and platforms |
-| `.github/workflows/demo.yml` | plan → execute → finalize |
+| `.github/workflows/demo.yml` | one job: read the receipt, skip what it covers, deploy |
 
 ## Run it locally
 
@@ -80,16 +84,31 @@ placement, scheduling decision, platform, and digests.
 git push --atomic origin HEAD refs/notes/runner-receipts
 ```
 
-`.github/workflows/demo.yml` then runs three stages:
+`.github/workflows/demo.yml` is one job that always shows the same four steps.
+It reads the receipt notes for the pushed commit, lists the tasks a passed
+receipt already covers, and then runs each step or skips it:
 
-| Stage | Command | What it proves |
-| --- | --- | --- |
-| plan | `runner ci plan api:github` | Verifies signatures and policy for the exact commit, marks `lint`, `unit`, `build` as `reused`, and emits a matrix of only what must run. |
-| execute | `runner ci execute --task <id>` | Runs each remaining task in isolation. No signing key is present. |
-| finalize | `runner ci finalize` | Combines reused and executed claims into one signed CI receipt and attaches it to the same commit. |
+```
+receipt   signed receipt covers: build lint unit
+lint      skipped: already verified for this commit
+unit      skipped: already verified for this commit
+build     skipped: already verified for this commit
+deploy    deploy to production
+```
 
-The job summary prints the decision and outcome per task. With a valid local
-receipt, only `deploy-github` executes.
+Push a commit with no receipt and the same workflow runs `go vet`, `go test`,
+and `go build` before deploying. The steps never change; only the work does.
+
+The workflow needs no secrets and knows nothing about Runner: it reads the
+signed evidence with `git` and `jq`. It simulates verification by trusting the
+receipt's contents. Real trust is `runner ci plan`, which checks the Ed25519
+signature, the protected policy in `.runner/receipt-policy.yaml`, the task
+input digests, and the platform before reusing anything:
+
+```bash
+runner ci plan api:github --project . --policy .runner/receipt-policy.yaml \
+  --branch main --fetch=false --output .runner-ci/plan.json --json
+```
 
 ## What to try next
 

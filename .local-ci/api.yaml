@@ -13,13 +13,21 @@ tasks:
   build:
     run: mkdir -p .local-ci-out && go build -trimpath -o .local-ci-out/hello .
 
+  deploy-local:
+    display_name: deploy
+    placement: local
+    needs: [lint, unit, build]
+    run: >-
+      echo 'deploy from local is not implemented: production deploys run in CI' >&2;
+      exit 1
+
   deploy-github:
     display_name: deploy
     placement: ci
     needs: [lint, unit, build]
-    run: mkdir -p .local-ci-out && echo 'hello from GitHub Runner' >.local-ci-out/deploy-hello.txt && cat .local-ci-out/deploy-hello.txt
+    run: echo 'deploy to production'
 
 entrypoints:
   preflight: [lint, unit, build]
+  deploy: [deploy-local]
   github: [deploy-github]
-
