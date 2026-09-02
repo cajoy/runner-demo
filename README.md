@@ -18,6 +18,13 @@ Five tasks in [`.local-ci/api.yaml`](.local-ci/api.yaml). `lint`, `unit`, and
 identities, so a laptop can never produce evidence that stands in for a
 production deploy.
 
+`lint` and `unit` declare `runtime: host`: they run as host processes using your
+own Go toolchain, in about 0.3 s each instead of ten seconds in a container.
+`build` keeps the pinned container. Their receipts record that difference, and
+it matters — `runner ci plan` scopes reuse by platform, so a host result from a
+laptop is deliberately not eligible to satisfy a Linux CI task. The simulated
+workflow here is more permissive than real verification would be.
+
 ## Locally
 
 ```bash

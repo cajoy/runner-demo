@@ -1,13 +1,14 @@
 schema: local-ci/v2
 service: api
 default: preflight
-root: .
 
 tasks:
   lint:
+    runtime: host
     run: go vet ./...
 
   unit:
+    runtime: host
     run: go test ./...
 
   build:
