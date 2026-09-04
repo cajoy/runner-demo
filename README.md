@@ -31,8 +31,8 @@ against that lock, and caches it.
 
 ```
 $ runner run --project . api:preflight
-installing Runner v0.8.12 from cajoy/runner-dist ...
-installed Runner v0.8.12 (7.8 MB), verified against .local-ci/toolchain.lock
+installing Runner v0.8.14 from cajoy/runner-dist ...
+installed Runner v0.8.14 (8.6 MB), verified against .local-ci/toolchain.lock
 ```
 
 That happens once per version, per machine. The lock declares no plugins, so
@@ -157,7 +157,7 @@ rather than accepting a claim:
 | | |
 | --- | --- |
 | you, at a terminal | `invoked by: terminal` |
-| an agent over MCP | `invoked by: runner-mcp · v0.8.12` |
+| an agent over MCP | `invoked by: runner-mcp · v0.8.14` |
 
 So "an agent changed this and shipped it" is visible in CI and in the dashboard,
 not just in a commit message. See [`CLAUDE.md`](CLAUDE.md) for the agent loop.

@@ -2,21 +2,21 @@
   "schema": "local-ci-toolchain-lock/v2",
   "runner": {
     "repository": "cajoy/runner",
-    "version": "v0.8.12",
-    "commit": "410aa086bc8c0f5e29aa738d96f1553998611360",
+    "version": "v0.8.14",
+    "commit": "e8bb16ef6264a3df546f022e475bd8e4178e2f52",
     "protocol": "local-ci/v1",
     "artifacts": {
       "darwin-arm64": {
-        "file": "runner_v0.8.12_darwin_arm64",
-        "sha256": "2762444df91dd82d9a96e73cd77979c295ed8bd24f9d02d07910d1182bce80ac"
+        "file": "runner_v0.8.14_darwin_arm64",
+        "sha256": "4fa7b0d84fe29484ce0ecce4f2b884a8873c8e3e06d2c65b36b0a6d7df65f83f"
       },
       "linux-amd64": {
-        "file": "runner_v0.8.12_linux_amd64",
-        "sha256": "061be9df9d4a5a23b39df04f10065145fce3f6db4f3aa9c08ca561469e7f252f"
+        "file": "runner_v0.8.14_linux_amd64",
+        "sha256": "638f51f7558d48378621c29f8aeaa90009b0cc3bbacfe65151d22df44562c092"
       },
       "linux-arm64": {
-        "file": "runner_v0.8.12_linux_arm64",
-        "sha256": "4106672691640702263056927072f2cc938495c69cde6ecd088615617211e07e"
+        "file": "runner_v0.8.14_linux_arm64",
+        "sha256": "f1da69baf8a517554808d6b61634cc8367751abbb0cbee81b4a60bda5e885a36"
       }
     }
   },
