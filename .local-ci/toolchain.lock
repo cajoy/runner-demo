@@ -2,91 +2,33 @@
   "schema": "local-ci-toolchain-lock/v2",
   "runner": {
     "repository": "cajoy/runner",
-    "version": "v0.8.5",
-    "commit": "e96a1745d873dbb53fc11d6c838785727b2a61d0",
+    "version": "v0.8.12",
+    "commit": "410aa086bc8c0f5e29aa738d96f1553998611360",
     "protocol": "local-ci/v1",
     "artifacts": {
       "darwin-arm64": {
-        "file": "runner_v0.8.5_darwin_arm64",
-        "sha256": "d2fe918b65b013fe400248214f33a92d4a50b9bbac8bbf9870faf6c028532d5d"
+        "file": "runner_v0.8.12_darwin_arm64",
+        "sha256": "2762444df91dd82d9a96e73cd77979c295ed8bd24f9d02d07910d1182bce80ac"
       },
       "linux-amd64": {
-        "file": "runner_v0.8.5_linux_amd64",
-        "sha256": "75dc720c7dc1cc37027b6d27af94923e565a37745c47d6a8f5eb9193a9736362"
+        "file": "runner_v0.8.12_linux_amd64",
+        "sha256": "061be9df9d4a5a23b39df04f10065145fce3f6db4f3aa9c08ca561469e7f252f"
       },
       "linux-arm64": {
-        "file": "runner_v0.8.5_linux_arm64",
-        "sha256": "bee2278ef35505173e89838f7ccfcc37c3fd208d1a83eb1c2433d2f8f5115131"
+        "file": "runner_v0.8.12_linux_arm64",
+        "sha256": "4106672691640702263056927072f2cc938495c69cde6ecd088615617211e07e"
       }
     }
   },
-  "plugins": {
-    "kubernetes": {
-      "repository": "cajoy/runner",
-      "version": "v0.8.5",
-      "commit": "e96a1745d873dbb53fc11d6c838785727b2a61d0",
-      "protocol": "runner-plugin/v1",
-      "artifacts": {
-        "darwin-arm64": {
-          "file": "runner-plugin-kubernetes_v0.8.5_darwin_arm64",
-          "sha256": "c070af2a2a99186d3d2b7c7c68b50b48c7f9d68e3341055703e9cdb0cf586454"
-        },
-        "linux-amd64": {
-          "file": "runner-plugin-kubernetes_v0.8.5_linux_amd64",
-          "sha256": "3c32508a5fea9db540892faf79da0be9281a329692168d008fc1a6a873a45137"
-        },
-        "linux-arm64": {
-          "file": "runner-plugin-kubernetes_v0.8.5_linux_arm64",
-          "sha256": "181bbb6ffea08bede549ca6de0c285d5b2aaf9c1927b10859f8b68b88dff98c7"
-        }
-      }
-    },
-    "local": {
-      "repository": "cajoy/runner",
-      "version": "v0.8.5",
-      "commit": "e96a1745d873dbb53fc11d6c838785727b2a61d0",
-      "protocol": "runner-plugin/v1",
-      "artifacts": {
-        "darwin-arm64": {
-          "file": "runner-plugin-local_v0.8.5_darwin_arm64",
-          "sha256": "a5161ac5690aa7eae508a5ec09e95a34d335040da8a38c0faaa7afbe84cc7594"
-        },
-        "linux-amd64": {
-          "file": "runner-plugin-local_v0.8.5_linux_amd64",
-          "sha256": "cbf898cf75da1fe715d6d8ace8f5d3770423a9dba9be17732a0f92b197c1e7c9"
-        },
-        "linux-arm64": {
-          "file": "runner-plugin-local_v0.8.5_linux_arm64",
-          "sha256": "d5dfa6d32ed34e7023076d918f72befa3ca14a88571f7373d79c45cc97e7d1cd"
-        }
-      }
-    },
-    "oci": {
-      "repository": "cajoy/runner",
-      "version": "v0.8.5",
-      "commit": "e96a1745d873dbb53fc11d6c838785727b2a61d0",
-      "protocol": "runner-plugin/v1",
-      "artifacts": {
-        "darwin-arm64": {
-          "file": "runner-plugin-oci_v0.8.5_darwin_arm64",
-          "sha256": "aa7dfb95e331a96c18541d642cb77195db7411a99d9f14164de5d132a78d29fc"
-        },
-        "linux-amd64": {
-          "file": "runner-plugin-oci_v0.8.5_linux_amd64",
-          "sha256": "7f685e3a3adf1a9dfe14c93eca8132f75ad53983164c583579a57fc305cabb84"
-        },
-        "linux-arm64": {
-          "file": "runner-plugin-oci_v0.8.5_linux_arm64",
-          "sha256": "6583efb8025581f809ba29ec42a1e16edb55ea74748acb2c7c258a4eea327ec4"
-        }
-      }
-    }
-  },
+  "plugins": {},
   "profiles": {
     "go": {
       "versions": {
         "1.26": {
           "image": "golang:1.26.3-bookworm"
+        },
+        "1.27": {
+          "image": "golang:1.27.1-bookworm"
         }
       }
     }

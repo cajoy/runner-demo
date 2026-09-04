@@ -1,5 +1,5 @@
 module example.com/runner-portable-ci-demo
 
-go 1.26.0
-toolchain go1.26.3
+go 1.27
 
+toolchain go1.27.1

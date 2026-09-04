@@ -41,6 +41,7 @@ jobs:
               "| | |", "| --- | --- |",
               "| signer | `\($e.envelope.signatures[0].keyid)` |",
               "| produced | \($r.producer.placement) · Runner \($r.producer.runner) |",
+              "| invoked by | \($r.producer.invoker.name // "terminal")\(if $r.producer.invoker then " · \($r.producer.invoker.version)" else "" end) |",
               "| commit | `\($r.subject.commit[0:12])` |",
               "| workflow | \($r.workflow.service):\($r.workflow.entrypoint) |",
               "| covers | \([$r.tasks[] | select(.state == "passed") | .id] | join(", ")) |",

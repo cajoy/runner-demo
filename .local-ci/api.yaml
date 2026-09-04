@@ -12,7 +12,7 @@ tasks:
     run: go test ./...
 
   build:
-    run: mkdir -p .local-ci-out && go build -trimpath -o .local-ci-out/hello .
+    run: mkdir -p .local-ci-out && go build -trimpath -o .local-ci-out/server .
 
   deploy-local:
     display_name: deploy
