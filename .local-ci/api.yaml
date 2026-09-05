@@ -3,16 +3,25 @@ service: api
 default: preflight
 
 tasks:
+  # Each task reports what it did. A receipt records that a task passed; the
+  # output is what tells you what "passed" was made of, so it is worth printing
+  # even on success.
   lint:
     runtime: host
-    run: go vet ./...
+    run: |
+      go vet ./...
+      echo "go vet: no findings in $(go list ./... | wc -l | tr -d ' ') package(s)"
 
   unit:
     runtime: host
-    run: go test ./...
+    run: |
+      go test -count=1 -cover ./...
 
   build:
-    run: mkdir -p .local-ci-out && go build -trimpath -o .local-ci-out/server .
+    run: |
+      mkdir -p .local-ci-out
+      go build -trimpath -o .local-ci-out/server .
+      echo "built .local-ci-out/server ($(du -h .local-ci-out/server | cut -f1))"
 
   # A task that fails on purpose, so the failure path is demonstrable: the
   # dashboard shows which task failed, its exit code, and this output.
