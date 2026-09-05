@@ -14,6 +14,20 @@ tasks:
   build:
     run: mkdir -p .local-ci-out && go build -trimpath -o .local-ci-out/server .
 
+  # A task that fails on purpose, so the failure path is demonstrable: the
+  # dashboard shows which task failed, its exit code, and this output.
+  smoke:
+    runtime: host
+    needs: [build]
+    run: |
+      echo "checking the rendered page for the release banner"
+      if ! grep -q "release-banner" index.html; then
+        echo "error: index.html is missing the release banner" >&2
+        echo "  expected an element with class \"release-banner\"" >&2
+        exit 3
+      fi
+      echo "ok"
+
   deploy-local:
     display_name: deploy
     placement: local
@@ -28,5 +42,6 @@ tasks:
 
 entrypoints:
   preflight: [lint, unit, build]
+  smoke: [smoke]
   deploy: [deploy-local]
   github: [deploy-github]
