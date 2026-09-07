@@ -83,8 +83,12 @@ returns `ok`. The template is embedded in the binary, so a broken page fails
 runner dashboard            # http://127.0.0.1:7331/
 ```
 
-Every run, its tasks, its receipt, and who produced it. The dashboard binds to
-loopback only — a non-loopback `--listen` is refused, not warned about.
+Every run, its tasks, its receipt, who produced it, and what it left behind on
+this machine. The dashboard only reads: if a crashed run left a container
+behind, it names it and you reclaim it with `runner cleanup --project .`.
+
+It binds to loopback only — a non-loopback `--listen` is refused, not warned
+about.
 
 ## Sign the run
 
