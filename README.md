@@ -14,14 +14,14 @@ Runner is a single binary. This installs the version this repository pins,
 verified against the release's published checksums:
 
 ```bash
-curl -fsSL https://github.com/hap-team/runner-dist/releases/latest/download/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/hap-team/runner-dist/main/install.sh | sh
 runner version
 ```
 
 Add `-s -- --with-mcp` to also register Runner with Claude Code and Codex:
 
 ```bash
-curl -fsSL https://github.com/hap-team/runner-dist/releases/latest/download/install.sh | sh -s -- --with-mcp
+curl -fsSL https://raw.githubusercontent.com/hap-team/runner-dist/main/install.sh | sh -s -- --with-mcp
 ```
 
 `~/.local/bin` needs to be on your `PATH`. You do not have to install anything
