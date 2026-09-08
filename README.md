@@ -6,6 +6,8 @@ The static preview is at https://cajoy.github.io/runner-demo/. It explains the d
 
 ## Install and set up this clone
 
+Host checks require Go 1.27 or newer on PATH. Confirm it with `GOTOOLCHAIN=local go version`; Runner fingerprints that compiler before running the checks.
+
 Install the repository's pinned Runner version with Go:
 
 ```sh
