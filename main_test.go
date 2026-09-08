@@ -1,11 +1,27 @@
 package main
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 )
+
+func TestStaticPageRendersTemplate(t *testing.T) {
+	var output bytes.Buffer
+	if err := writeStaticPage(&output); err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{content().Heading, content().Tagline, "<!doctype html>"} {
+		if !strings.Contains(output.String(), want) {
+			t.Fatalf("static page is missing %q", want)
+		}
+	}
+	if strings.Contains(output.String(), "{{") {
+		t.Fatal("static page contains an unresolved template action")
+	}
+}
 
 func TestIndexRendersThepage(t *testing.T) {
 	mux, err := handler()

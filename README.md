@@ -1,5 +1,18 @@
 # Runner demo
 
+Live page: https://cajoy.github.io/runner-demo/
+
+The GitHub Pages preview renders the same `index.html` template as the Go
+server. To refresh it after changing the page or `content()`:
+
+```bash
+go run . -export > docs/index.html
+```
+
+Commit the rendered page with its source changes. GitHub Pages serves `docs/`
+from `main`; it hosts the UI only and does not run the Go server or verify
+Runner receipts.
+
 Work verified on a laptop is not repeated in CI.
 
 A local run signs a receipt bound to the exact commit. CI reads that receipt,
@@ -14,14 +27,14 @@ Runner is a single binary. This installs the version this repository pins,
 verified against the release's published checksums:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hap-team/runner-dist/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/cajoy/runner-dist/main/install.sh | sh
 runner version
 ```
 
 Add `-s -- --with-mcp` to also register Runner with Claude Code and Codex:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hap-team/runner-dist/main/install.sh | sh -s -- --with-mcp
+curl -fsSL https://raw.githubusercontent.com/cajoy/runner-dist/main/install.sh | sh -s -- --with-mcp
 ```
 
 `~/.local/bin` needs to be on your `PATH`.
@@ -30,7 +43,7 @@ Then get the repository, because every command below reads its workflow out of
 this working tree:
 
 ```bash
-git clone https://github.com/hap-team/runner-demo.git
+git clone https://github.com/cajoy/runner-demo.git
 cd runner-demo
 ```
 
@@ -70,8 +83,8 @@ installer put on your `PATH` is not necessarily the one that runs here:
 
 ```
 $ runner run --project . api:preflight
-installing Runner v0.8.14 from hap-team/runner-dist ...
-installed Runner v0.8.14 (8.6 MB), verified against .local-ci/toolchain.lock
+installing Runner v0.8.26 from cajoy/runner-dist ...
+installed Runner v0.8.26 (size depends on platform), verified against .local-ci/toolchain.lock
 ```
 
 That happens once per version, per machine. The lock declares no plugins, so
@@ -202,7 +215,7 @@ rather than accepting a claim:
 | | |
 | --- | --- |
 | you, at a terminal | `invoked by: terminal` |
-| an agent over MCP | `invoked by: runner-mcp · v0.8.14` |
+| an agent over MCP | `invoked by: runner-mcp · v0.8.26` |
 
 So "an agent changed this and shipped it" is visible in CI and in the dashboard,
 not just in a commit message. See [`CLAUDE.md`](CLAUDE.md) for the agent loop.

@@ -5,8 +5,10 @@ package main
 
 import (
 	_ "embed"
+	"flag"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -57,7 +59,23 @@ func handler() (http.Handler, error) {
 	return mux, nil
 }
 
+func writeStaticPage(w io.Writer) error {
+	parsed, err := template.New("index").Parse(page)
+	if err != nil {
+		return err
+	}
+	return parsed.Execute(w, content())
+}
+
 func main() {
+	export := flag.Bool("export", false, "render index.html to stdout for static hosting")
+	flag.Parse()
+	if *export {
+		if err := writeStaticPage(os.Stdout); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
 	address := os.Getenv("ADDR")
 	if address == "" {
 		address = "127.0.0.1:8080"
