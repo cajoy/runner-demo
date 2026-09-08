@@ -14,14 +14,14 @@ Runner is a single binary. This installs the version this repository pins,
 verified against the release's published checksums:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hap-team/runner-dist/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/cajoy/runner-dist/main/install.sh | sh
 runner version
 ```
 
 Add `-s -- --with-mcp` to also register Runner with Claude Code and Codex:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hap-team/runner-dist/main/install.sh | sh -s -- --with-mcp
+curl -fsSL https://raw.githubusercontent.com/cajoy/runner-dist/main/install.sh | sh -s -- --with-mcp
 ```
 
 `~/.local/bin` needs to be on your `PATH`.
@@ -30,7 +30,7 @@ Then get the repository, because every command below reads its workflow out of
 this working tree:
 
 ```bash
-git clone https://github.com/hap-team/runner-demo.git
+git clone https://github.com/cajoy/runner-demo.git
 cd runner-demo
 ```
 
@@ -75,7 +75,9 @@ installed Runner v0.8.14 (8.6 MB), verified against .local-ci/toolchain.lock
 ```
 
 That happens once per version, per machine. The lock declares no plugins, so
-nothing but Runner itself is downloaded.
+nothing but Runner itself is downloaded. The distribution repository named in
+that line is the one compiled into the release you installed; releases now live
+under `cajoy/runner-dist`, and the older name still resolves to it.
 
 ## The workflow
 
