@@ -18,21 +18,74 @@ import (
 //go:embed index.html
 var page string
 
-// Page is what index.html renders. Change the copy here or in the template and
-// the unit test, the receipt, and the deployed page all move together.
+// Page is what index.html renders. Change the copy or the numbers here and the
+// unit test, the receipt, and the deployed page all move together. That is the
+// demo: editing this struct is a code change, so it has to earn the same proof
+// as any other one.
 type Page struct {
-	Title   string
-	Heading string
-	Tagline string
-	Built   string
+	Title     string
+	Heading   string
+	Tagline   string
+	Ratio     string
+	RatioNote string
+	Punchline string
+	Chart     string
+	Bars      []Bar
+	Note      string
+	Built     string
+}
+
+// Bar is one row of the chart. Its cells are rendered as markup rather than an
+// inline width, so the template never interpolates into a style attribute.
+type Bar struct {
+	Label string
+	Value string
+	Cells []bool
+}
+
+// barCells fills a fixed-width track proportionally. A zero value still renders
+// an empty track, so a row never silently disappears.
+func barCells(value, max int) []bool {
+	const width = 20
+	cells := make([]bool, width)
+	if max <= 0 {
+		return cells
+	}
+	filled := min(value*width/max, width)
+	for i := range filled {
+		cells[i] = true
+	}
+	return cells
 }
 
 func content() Page {
+	// CI runs lint, unit, build and deploy. A receipt that covers the first
+	// three leaves only deploy. These are stated here, not measured here: the
+	// receipt is what proves them.
+	const withoutReceipts, withReceipts = 4, 1
 	return Page{
-		Title:   "Runner demo",
-		Heading: "Runner demo",
-		Tagline: "Local verification, task receipts, and a shareable page.",
-		Built:   time.Now().UTC().Format(time.RFC3339),
+		Title:     "Runner demo",
+		Heading:   "Runner demo",
+		Tagline:   "Local verification, task receipts, and a shareable page.",
+		Ratio:     "4 : 1",
+		RatioNote: "CPUs bought per GPU for agentic work — Intel, 2026",
+		Punchline: "The fourth one is your laptop.",
+		Chart:     "What CI ran for a commit like this one",
+		Bars: []Bar{
+			{
+				Label: "without a receipt",
+				Value: "4 jobs",
+				Cells: barCells(withoutReceipts, withoutReceipts),
+			},
+			{
+				Label: "with a receipt",
+				Value: "1 job",
+				Cells: barCells(withReceipts, withoutReceipts),
+			},
+		},
+		Note: "Across 51 public repositories, a median 42.7% of check runs re-proved " +
+			"already-proven content.",
+		Built: time.Now().UTC().Format(time.RFC3339),
 	}
 }
 

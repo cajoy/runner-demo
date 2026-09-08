@@ -11,11 +11,36 @@
     font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     background: Canvas; color: CanvasText;
   }
-  main { max-width: 34rem; padding: 2rem; }
+  main { max-width: 40rem; padding: 2rem; }
   h1 { font-size: 2.25rem; line-height: 1.2; margin: 0 0 0.5rem; letter-spacing: -0.02em; }
+  h2 { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+       opacity: 0.6; margin: 0 0 0.75rem; }
   p { margin: 0 0 1rem; }
   .tagline { font-size: 1.125rem; }
-  footer { font-size: 0.8125rem; opacity: 0.65; border-top: 1px solid; border-color: color-mix(in srgb, CanvasText 15%, transparent); padding-top: 1rem; }
+  .rule { border: 0; border-top: 1px solid;
+          border-color: color-mix(in srgb, CanvasText 15%, transparent); margin: 2rem 0; }
+
+   
+  .ratio { text-align: center; margin: 0 0 2rem; }
+  .ratio-figure { font-size: 4.5rem; line-height: 1; font-weight: 600; letter-spacing: -0.03em;
+                  font-variant-numeric: tabular-nums; }
+  .ratio-note { font-size: 0.875rem; opacity: 0.65; margin: 0.5rem 0 0; }
+  .punchline { font-size: 1.25rem; font-weight: 600; margin: 1rem 0 0; }
+
+   
+  .bar { display: grid; grid-template-columns: 9rem 1fr auto; gap: 0.75rem;
+         align-items: center; margin-bottom: 0.5rem; font-size: 0.9375rem; }
+  .bar-label { opacity: 0.75; }
+  .bar-track { display: flex; gap: 2px; }
+  .bar-track i { height: 1.125rem; flex: 1;
+                 background: color-mix(in srgb, CanvasText 12%, transparent); border-radius: 1px; }
+  .bar-track i.on { background: color-mix(in srgb, CanvasText 72%, transparent); }
+  .bar-value { font-variant-numeric: tabular-nums; opacity: 0.75; }
+  .note { font-size: 0.8125rem; opacity: 0.65; margin-top: 1rem; }
+
+  footer { font-size: 0.8125rem; opacity: 0.65; border-top: 1px solid;
+           border-color: color-mix(in srgb, CanvasText 15%, transparent);
+           padding-top: 1rem; margin-top: 2rem; }
   code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.875em; }
 </style>
 </head>
@@ -23,11 +48,45 @@
   <main>
     <h1>Runner demo</h1>
     <p class="tagline">Local verification, task receipts, and a shareable page.</p>
+
+    <hr class="rule">
+
+    <section class="ratio">
+      <div class="ratio-figure">4 : 1</div>
+      <p class="ratio-note">CPUs bought per GPU for agentic work — Intel, 2026</p>
+      <p class="punchline">The fourth one is your laptop.</p>
+    </section>
+
+    <p>Agentic AI turned out to be a CPU story: the orchestration around the
+       model, not the model. That work is a build, a test suite, a container —
+       and it runs just as well on the machine that already has the source, the
+       caches, and the warm containers.</p>
+
+    <section>
+      <h2>What CI ran for a commit like this one</h2>
+      
+      <div class="bar">
+        <span class="bar-label">without a receipt</span>
+        <span class="bar-track" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>
+        <span class="bar-value">4 jobs</span>
+      </div>
+      
+      <div class="bar">
+        <span class="bar-label">with a receipt</span>
+        <span class="bar-track" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></span>
+        <span class="bar-value">1 job</span>
+      </div>
+      
+      <p class="note">Across 51 public repositories, a median 42.7% of check runs re-proved already-proven content.</p>
+    </section>
+
     <p>Run the preflight workflow locally, then inspect its task receipts and
-       compare the next run. This static preview shows the demo UI; it does not
-       certify that this commit has a signed receipt or that CI skipped its tasks.</p>
+       compare the next run. This static preview shows the demo UI and the
+       numbers this page states; it does not certify that this commit has a
+       signed receipt or that CI skipped its tasks. The receipt does that.</p>
+
     <footer>
-      Served at 2026-09-08T15:54:28Z · <code>runner run --project . api:preflight</code>
+      Served at 2026-09-08T15:56:48Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>

@@ -73,3 +73,57 @@ func TestUnknownPathIsNotFound(t *testing.T) {
 		t.Fatalf("status = %d, want 404", recorder.Code)
 	}
 }
+
+// The slide is the demo's argument, so its numbers are part of the contract the
+// receipt covers. A silent template rename would otherwise ship a blank chart.
+func TestPageRendersTheRatioAndTheChart(t *testing.T) {
+	var output bytes.Buffer
+	if err := writeStaticPage(&output); err != nil {
+		t.Fatal(err)
+	}
+	body := output.String()
+	page := content()
+	for _, want := range []string{page.Ratio, page.RatioNote, page.Punchline, page.Chart, page.Note} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("page is missing %q", want)
+		}
+	}
+	for _, bar := range page.Bars {
+		if !strings.Contains(body, bar.Label) || !strings.Contains(body, bar.Value) {
+			t.Fatalf("page is missing bar %q", bar.Label)
+		}
+	}
+	// A filled cell is what makes the comparison visible at all.
+	if !strings.Contains(body, `<i class="on">`) {
+		t.Fatal("chart rendered no filled cells")
+	}
+}
+
+// The bar is a comparison: the reused row must be visibly shorter, or the page
+// states a saving it does not show.
+func TestChartShowsFewerJobsWithAReceipt(t *testing.T) {
+	bars := content().Bars
+	if len(bars) != 2 {
+		t.Fatalf("bars = %d, want 2", len(bars))
+	}
+	filled := func(bar Bar) int {
+		count := 0
+		for _, cell := range bar.Cells {
+			if cell {
+				count++
+			}
+		}
+		return count
+	}
+	if filled(bars[1]) >= filled(bars[0]) {
+		t.Fatalf("with-receipt bar is not shorter: %d vs %d", filled(bars[1]), filled(bars[0]))
+	}
+}
+
+func TestBarCellsHandleAZeroMaximum(t *testing.T) {
+	for _, cell := range barCells(3, 0) {
+		if cell {
+			t.Fatal("a zero maximum filled the track")
+		}
+	}
+}
