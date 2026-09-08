@@ -61,8 +61,10 @@ MCP and step 3 was skipped.
 - Never use `--signer local-alex`. That identity is Alex's.
 - `api:deploy` stops on purpose — deploying from a laptop is not supported. Do
   not try to route around it.
-- `executor_unavailable: docker` means this machine's container engine is not
-  running. Say so and stop. Do not give `build` a `runtime: host` to get the run
-  to pass: the receipt would claim a container result nothing produced.
+- The local demo explicitly runs `lint`, `unit`, and `build` with `runtime: host`.
+  Their receipts describe host execution, not a container result. Keep all three
+  independent checks parallel, including on battery power (`on_battery: 3`).
+- For tasks that declare a container runtime, `executor_unavailable: docker`
+  means the engine is not running. Do not silently substitute host execution.
 - If `lint` or `unit` fails, fix the code. Do not attach a receipt for a failed
   run, and do not skip tasks to make a run pass.

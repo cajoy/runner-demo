@@ -18,6 +18,7 @@ tasks:
       go test -count=1 -cover ./...
 
   build:
+    runtime: host
     run: |
       mkdir -p .local-ci-out
       go build -trimpath -o .local-ci-out/server .

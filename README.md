@@ -62,19 +62,10 @@ and those need what any Go checkout needs:
 
 | | needed by | why |
 | --- | --- | --- |
-| a Go toolchain | `lint`, `unit`, `smoke` | they declare `runtime: host` and run as processes on your machine |
-| Docker, or Apple `container` | `build` | it declares no `runtime`, so it runs in the image the lock pins |
+| a Go toolchain | `lint`, `unit`, `build`, `smoke` | they declare `runtime: host` and run as processes on your machine |
 
-An engine that is installed but not started is not reachable, and Runner stops
-instead of quietly running the task somewhere else:
-
-```
-$ runner run --project . api:preflight
-error: executor_unavailable: docker
-```
-
-Start the engine and run it again. `.local-ci/runner.yaml` accepts `docker` or
-`apple-container`; nothing else is tried.
+Local `api:preflight` does not need Docker or Apple Container. The container
+executor configuration remains available for tasks that explicitly use it.
 
 What Runner does fetch is Runner. The first run in this repository downloads the
 exact version [`.local-ci/toolchain.lock`](.local-ci/toolchain.lock) pins,
@@ -103,14 +94,17 @@ Five tasks in [`.local-ci/api.yaml`](.local-ci/api.yaml). `lint`, `unit`, and
 identities, so a laptop can never produce evidence that stands in for a
 production deploy.
 
-`lint` and `unit` declare `runtime: host`: they run as host processes using your
-own Go toolchain, in about 0.3 s each instead of ten seconds in a container.
-`build` keeps the pinned container. Those are warm numbers — the first run on a
-machine also pulls the image and fills the Go build cache, and takes about half
-a minute. Their receipts record that difference, and
-it matters — `runner ci plan` scopes reuse by platform, so a host result from a
-laptop is deliberately not eligible to satisfy a Linux CI task. The simulated
-workflow here is more permissive than real verification would be.
+`lint`, `unit`, and `build` declare `runtime: host` and use your Go toolchain.
+The demo allows three concurrent tasks on both AC and battery power. They may
+still contend for CPU or Go's build cache; their actual timings appear in the
+run output. Receipts record the host platform. `runner ci plan` checks platform
+policy before reusing evidence, so a macOS result does not automatically cover
+a Linux CI task.
+
+The final `run.passed` log line prints `receipt=".local-ci/state/runs/<run-id>/receipt.json"`.
+That file contains the run and each task's result. It is also visible in the
+local dashboard. Creating this local receipt does not sign or publish it for
+portable CI reuse; attaching a signed receipt is a separate step.
 
 ## Run it
 
