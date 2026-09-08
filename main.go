@@ -1,6 +1,6 @@
 // A small web server, so the demo has something you can actually look at and
-// something worth changing. `runner run` verifies it on your laptop; CI trusts
-// that receipt instead of repeating the work.
+// something worth changing. Runner verifies original signed evidence before
+// reusing checks whose declared inputs and runtime still match.
 package main
 
 import (
@@ -59,34 +59,24 @@ func barCells(value, max int) []bool {
 }
 
 func content() Page {
-	// Job-minutes for one pull request. Both inputs are measured and neither is
-	// measured here: the 14 comes from 30 days of one large public repository,
-	// and the second row is that figure minus the 42.7% median re-proof share
-	// found across 51 repositories.
-	const withoutReceipts, withReceipts = 14, 8
+	// The demonstrated all-valid case: lint, unit, and build already passed.
+	// CI still verifies signatures, policy, content, and the runtime.
+	const withoutReceipts, withReceipts = 3, 0
 	return Page{
 		Title:     "Runner demo",
 		Heading:   "Runner demo",
-		Tagline:   "Local verification, task receipts, and a shareable page.",
-		Ratio:     "4 : 1",
-		RatioNote: "CPUs bought per GPU for agentic work — Intel, 2026",
-		Punchline: "The fourth one is your laptop.",
-		Chart:     "CI time for one pull request",
+		Tagline:   "Verify once. Sign automatically. Carry proof with git push.",
+		Ratio:     "3 → 0",
+		RatioNote: "Repeated checks when all three original proofs remain valid",
+		Punchline: "Run the checks. Keep their proof.",
+		Chart:     "Verification commands in the all-valid demo case",
 		Bars: []Bar{
-			{
-				Label: "without a receipt",
-				Value: "14 min",
-				Cells: barCells(withoutReceipts, withoutReceipts),
-			},
-			{
-				Label: "with a receipt",
-				Value: "8 min",
-				Cells: barCells(withReceipts, withoutReceipts),
-			},
+			{Label: "without a receipt", Value: "3 checks", Cells: barCells(withoutReceipts, withoutReceipts)},
+			{Label: "with a receipt", Value: "0 checks", Cells: barCells(withReceipts, withoutReceipts)},
 		},
-		Note: "Measured over 30 days of one large public repository: a pull request ran " +
-			"about 14 job-minutes. Across 51 repositories a median 42.7% of check runs " +
-			"re-proved already-proven content, and the second row is that share removed.",
+		Note: "An illustrative state, not a live run report. Runner checks the original signature, " +
+			"trusted policy, input content, and runtime before skipping lint, unit, or build. " +
+			"The deployment simulation still runs. macOS host proof does not authorize Linux CI reuse.",
 		Built: time.Now().UTC().Format(time.RFC3339),
 	}
 }

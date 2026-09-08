@@ -1,228 +1,80 @@
-# Runner demo
+# Runner receipt reuse demo
 
-Live page: https://cajoy.github.io/runner-demo/
+Runner runs lint, unit tests, and build in parallel, then signs their proof automatically. Later runs reuse a check only when its declared inputs, runtime, and trusted policy still match. Ordinary `git push` carries the signed receipts after one-time setup.
 
-The GitHub Pages preview renders the same `index.html` template as the Go
-server. To refresh it after changing the page or `content()`:
+The static preview is at https://cajoy.github.io/runner-demo/. It explains the demo; the CLI, local dashboard, and GitHub job summary show evidence from actual runs.
 
-```bash
-go run . -export > docs/index.html
-```
+## Install and set up this clone
 
-Commit the rendered page with its source changes. GitHub Pages serves `docs/`
-from `main`; it hosts the UI only and does not run the Go server or verify
-Runner receipts.
+Install the repository's pinned Runner version with Go:
 
-Work verified on a laptop is not repeated in CI.
-
-A local run signs a receipt bound to the exact commit. CI reads that receipt,
-skips every step it already covers, and goes straight to deploy.
-
-This repository is a small Go web server so there is something real to change,
-build, and look at in a browser.
-
-## Install
-
-Runner is a single binary. This installs the version this repository pins,
-verified against the release's published checksums:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/cajoy/runner-dist/main/install.sh | sh
+```sh
+go run ./cmd/demo-install
+export PATH="$PWD/.runner-ci/bin:$PATH"
 runner version
+git fetch origin main:refs/remotes/origin/main
+runner receipts setup --project . --signer local-alex \
+  --policy .runner/receipt-policy.yaml --policy-ref refs/remotes/origin/main
 ```
 
-Add `-s -- --with-mcp` to also register Runner with Claude Code and Codex:
+Setup uses the existing `local-alex` signing key. It does not create a key. The demo policy trusts that key for these verification tasks. Another user needs an existing key that the protected policy explicitly trusts.
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/cajoy/runner-dist/main/install.sh | sh -s -- --with-mcp
+Setup configures this clone's default push to include HEAD and `refs/notes/runner-receipts`, and installs a pre-push guard. It preserves an existing default pre-push hook. Custom hook directories or conflicting push refspecs require explicit integration.
+
+## Demonstrate local reuse
+
+Commit the source you want to verify, then run:
+
+```sh
+runner run --verbose --project . api:preflight
+runner run --verbose --project . api:deploy
 ```
 
-`~/.local/bin` needs to be on your `PATH`.
+Preflight runs lint, unit, and build on the host with concurrency three, including on battery power. A clean passing run creates and signs receipts automatically. The next deploy run reuses eligible checks and restores the verified build artifact. It still runs the local deployment simulation, which renders `.local-ci-out/preview.html` from the server binary. It changes no production service.
 
-Then get the repository, because every command below reads its workflow out of
-this working tree:
+Logs show `task.reused`, the original run and receipt references, and receipt status. The normal local dashboard is http://127.0.0.1:7331/.
 
-```bash
-git clone https://github.com/cajoy/runner-demo.git
-cd runner-demo
+Try a README-only commit: these workflows explicitly exclude README.md, CLAUDE.md, and docs from verification inputs. Their proof remains reusable across commit changes. A source edit, embedded file edit, changed command, environment, toolchain, runtime, or missing required artifact causes affected checks to run again. Unknown coverage runs fresh.
+
+```sh
+runner run --verbose --project . --fresh api:preflight
 ```
 
-`--project .` resolves against the directory you are standing in, so running it
-anywhere else reports the config it could not find and stops:
+`--fresh` deliberately executes checks even when reusable proof exists. Dirty or failed runs keep diagnostic receipts but do not receive automatic portable signatures.
 
-```
-$ runner run --project . api:preflight
-error: config_read: /Users/you/projects/.local-ci/runner.yaml
-```
+## Deliver proof to Linux CI
 
-## What the tasks need
+Host macOS proof is valid for matching host runs. The Linux CI workflow requires its own proof from the pinned Linux image:
 
-Runner brings no toolchain with it. It runs the tasks this repository declares,
-and those need what any Go checkout needs:
-
-| | needed by | why |
-| --- | --- | --- |
-| a Go toolchain | `lint`, `unit`, `build`, `smoke` | they declare `runtime: host` and run as processes on your machine |
-
-Local `api:preflight` does not need Docker or Apple Container. The container
-executor configuration remains available for tasks that explicitly use it.
-
-What Runner does fetch is Runner. The first run in this repository downloads the
-exact version [`.local-ci/toolchain.lock`](.local-ci/toolchain.lock) pins,
-verifies every byte against that lock, and caches it — so the version the
-installer put on your `PATH` is not necessarily the one that runs here:
-
-```
-$ runner run --project . api:preflight
-installing Runner v0.8.27 from cajoy/runner-dist ...
-installed Runner v0.8.27 (size depends on platform), verified against .local-ci/toolchain.lock
+```sh
+runner run --verbose --project . api-linux:preflight
+git push
+runner receipts status --project . --refresh
 ```
 
-That happens once per version, per machine. The lock declares no plugins, so
-nothing but Runner itself is downloaded.
+The Linux workflow uses Docker with a pinned image and linux/arm64 platform. It runs the same three verification commands. Ordinary push carries its notes; Runner makes no second network push. If concurrent notes require a local merge, the guard explains the retry and you run `git push` again.
 
-## The workflow
+The GitHub workflow installs the pinned Runner binary, loads policy from the protected main ref, verifies original signatures and content identity, runs any missing checks, and verifies final evidence before printing a simulated deployment. It needs no private signing key. The job summary includes every task, decision, original run, receipt digest, platform, actor, and signing key.
 
-```
-lint ─┐
-unit ─┼─→ deploy-local     not implemented, deploys run in CI
-build ┘   deploy-github    "deploy to production"
-```
+A delivered receipt means the remote has the code and original proof. Receiver verification is a separate step. Offline verification remains useful and reports pending delivery.
 
-Five tasks in [`.local-ci/api.yaml`](.local-ci/api.yaml). `lint`, `unit`, and
-`build` are independent and run in parallel. The two deploy tasks are separate
-identities, so a laptop can never produce evidence that stands in for a
-production deploy.
+## Human and agent labels
 
-`lint`, `unit`, and `build` declare `runtime: host` and use your Go toolchain.
-The demo allows three concurrent tasks on both AC and battery power. They may
-still contend for CPU or Go's build cache; their actual timings appear in the
-run output. Receipts record the host platform. `runner ci plan` checks platform
-policy before reusing evidence, so a macOS result does not automatically cover
-a Linux CI task.
+Terminal runs default to `human/terminal_default`. Agents invoking the CLI use:
 
-The final `run.passed` log line prints `receipt=".local-ci/state/runs/<run-id>/receipt.json"`.
-That file contains the run and each task's result. It is also visible in the
-local dashboard. Creating this local receipt does not sign or publish it for
-portable CI reuse; attaching a signed receipt is a separate step.
-
-## Run it
-
-```bash
-runner run --project . api:preflight            # lint, unit, build
-runner run --project . --verbose api:preflight  # watch it happen
-runner run --project . api:deploy               # stops: not implemented locally
+```sh
+runner run --actor agent --verbose --project . api:preflight
 ```
 
-Then look at the thing you just built:
+MCP runs record `agent/mcp` automatically. Both use the explicitly configured existing signer. Actor labels describe invocation; they grant no authority and do not identify the person controlling a key.
 
-```bash
-go run .                    # http://127.0.0.1:8080/
-ADDR=127.0.0.1:9000 go run .
+## Exercise the failure cases
+
+```sh
+go test ./...
+RUNNER_BIN="$PWD/.runner-ci/bin/runner" ./test-cases/run.sh
 ```
 
-`/` renders [`index.html`](index.html) through `html/template`; `/healthz`
-returns `ok`. The template is embedded in the binary, so a broken page fails
-`unit` rather than reaching a browser.
+The Go harness invokes the real Runner binary and real Go commands in disposable repositories. It checks proof coverage, tampering, expiry, content changes, local artifacts, normal pushes, and verified CI finalization. It never publishes fabricated evidence to this repository.
 
-## The dashboard
-
-```bash
-runner dashboard            # http://127.0.0.1:7331/
-```
-
-Every run, its tasks, its receipt, who produced it, and what it left behind on
-this machine. The dashboard only reads: if a crashed run left a container
-behind, it names it and you reclaim it with `runner cleanup --project .`.
-
-It binds to loopback only — a non-loopback `--listen` is refused, not warned
-about.
-
-## Sign the run
-
-A run is not signed by running it. `runner run` writes the receipt into the
-project's state; `runner receipts attach` is what binds a signed copy to the
-commit.
-
-```bash
-runner receipts attach --project . --run <run-id> --commit HEAD \
-  --signer local-alex --json
-```
-
-The first attach creates the `local-alex` Ed25519 key in your login Keychain.
-The full receipt stays in the run's state directory; a redacted, signed copy
-goes into `refs/notes/runner-receipts`, carrying the commit, the workflow, task
-digests, platform, and outcome — never paths, commands, environment values, or
-logs. A dirty tree cannot be signed.
-
-## Push it so CI can see it
-
-Receipts live in a notes ref, and an ordinary `git push` does not carry one.
-Either name it every time:
-
-```bash
-git push --atomic origin HEAD refs/notes/runner-receipts
-```
-
-or teach this clone to send and fetch it with every push, once:
-
-```bash
-git config --add remote.origin.push HEAD
-git config --add remote.origin.push refs/notes/runner-receipts
-git config --add remote.origin.fetch '+refs/notes/runner-receipts:refs/notes/runner-receipts'
-```
-
-Push a commit whose receipt never left your laptop and CI correctly reports
-that it covers nothing.
-
-## In CI
-
-[`.github/workflows/demo.yml`](.github/workflows/demo.yml) always shows the same
-four steps. It reads the receipt for the pushed commit and skips what is
-covered:
-
-| | with a receipt | without one |
-| --- | --- | --- |
-| receipt | `covers: ["build","lint","unit"]` | `covers: []` |
-| lint | skipped | `go vet ./...` |
-| unit | skipped | `go test ./...` |
-| build | skipped | `go build` |
-| deploy | deploy to production | deploy to production |
-
-Push an ordinary commit to see the right-hand column, then attach a receipt to
-that same commit and re-run to see the left.
-
-GitHub's web UI does not render Git notes anywhere, so the workflow prints the
-receipt into the run's job summary: digest, signer, producer, who invoked it,
-commit, workflow, what it covers, and the platform it ran on.
-
-The workflow needs no secrets and installs nothing — not even Runner. It reads
-the signed evidence with `git` and `jq`. It trusts the receipt's contents rather
-than checking the signature, which is the part a real deployment would not
-simulate.
-
-## Who ran it
-
-A receipt records the tool that asked for the run, and Runner stamps that itself
-rather than accepting a claim:
-
-| | |
-| --- | --- |
-| you, at a terminal | `invoked by: terminal` |
-| an agent over MCP | `invoked by: runner-mcp · v0.8.27` |
-
-So "an agent changed this and shipped it" is visible in CI and in the dashboard,
-not just in a commit message. See [`CLAUDE.md`](CLAUDE.md) for the agent loop.
-
-## Files
-
-| Path | |
-| --- | --- |
-| `main.go`, `index.html` | the server and the page it renders |
-| `.local-ci/api.yaml` | the five tasks |
-| `.local-ci/runner.yaml` | driver, concurrency, no plugins |
-| `.local-ci/toolchain.lock` | the exact Runner and runtime image this repository pins |
-| `.github/workflows/demo.yml` | reads the receipt, skips what it covers |
-| `CLAUDE.md` | how an agent drives all of the above |
-
-Runs, logs, and receipts are not tracked.
+The workflows preserve production authorization requirements. Portable receipts carry proof; this demo does not transport build artifacts between machines or deploy a production application.

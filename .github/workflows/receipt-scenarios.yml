@@ -1,0 +1,24 @@
+name: Receipt scenarios
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  scenarios:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: go.mod
+      - name: Install pinned Runner
+        run: go run ./cmd/demo-install
+      - name: Test the Go demo tools
+        run: go test -race ./cmd/...
+      - name: Verify receipt scenarios against real Runner
+        env:
+          RUNNER_BIN: ${{ github.workspace }}/.runner-ci/bin/runner
+        run: ./test-cases/run.sh

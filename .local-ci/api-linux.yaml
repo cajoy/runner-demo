@@ -1,9 +1,9 @@
 schema: local-ci/v2
-service: api
+service: api-linux
 default: preflight
 runtime:
   image: golang:1.27.1-bookworm@sha256:648f440f42a0958804efb24df176f806f9d353b41f1c0627f666428e40310f6b
-  platform: linux/native
+  platform: linux/arm64
 env:
   GOENV: off
   GOWORK: off
@@ -12,32 +12,16 @@ env:
   GOFLAGS: "-buildvcs=false -trimpath -mod=readonly"
 tasks:
   lint:
-    runtime: host
     verification: {kind: go, exclude: [README.md, CLAUDE.md, docs]}
     run: go vet ./...
   unit:
-    runtime: host
     verification: {kind: go, exclude: [README.md, CLAUDE.md, docs]}
     run: go test -count=1 -cover ./...
   build:
-    runtime: host
     verification: {kind: go, exclude: [README.md, CLAUDE.md, docs]}
     run: go build -o .local-ci-out/server .
     artifacts:
       server: {path: .local-ci-out/server}
-  smoke:
-    runtime: host
-    needs: [build]
-    run: go run ./cmd/demo-deploy
-  deploy-local:
-    display_name: deploy
-    runtime: host
-    placement: local
-    needs: [lint, unit, build]
-    run: go run ./cmd/demo-deploy
-    artifacts:
-      preview: {path: .local-ci-out/preview.html}
 entrypoints:
   preflight: [lint, unit, build]
-  smoke: [smoke]
-  deploy: [deploy-local]
+  github: [lint, unit, build]

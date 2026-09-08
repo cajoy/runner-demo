@@ -1,64 +1,37 @@
-name: CI
-
+name: Verified receipt reuse
 on:
   push:
+  pull_request:
   workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
-  ci:
-    runs-on: ubuntu-latest
+  verify:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
         with:
           go-version-file: go.mod
-
-      - name: receipt
-        id: receipt
-        run: |
-          set -euo pipefail
-          git fetch --quiet origin \
-            'refs/notes/runner-receipts:refs/notes/runner-receipts' 2>/dev/null || true
-          note=$(git notes --ref=runner-receipts show "$GITHUB_SHA" 2>/dev/null || echo '{}')
-          verified=$(printf '%s' "$note" | jq -c '
-            [(.entries // [])[].envelope.payload | @base64d | fromjson
-             | .tasks[] | select(.state == "passed") | .id] | unique')
-          echo "verified=$verified" >>"$GITHUB_OUTPUT"
-
-          # Git notes are invisible in the GitHub UI, so render the receipt here.
-          printf '%s' "$note" | jq -r '
-            if (.entries // []) == [] then
-              "## No receipt for this commit\n\nEvery step runs."
-            else
-              (.entries[0] as $e | ($e.envelope.payload | @base64d | fromjson) as $r |
-              "## Receipt \($e.receipt_digest[7:15])\n",
-              "| | |", "| --- | --- |",
-              "| signer | `\($e.envelope.signatures[0].keyid)` |",
-              "| produced | \($r.producer.placement) · Runner \($r.producer.runner) |",
-              "| invoked by | \($r.producer.invoker.name // "terminal")\(if $r.producer.invoker then " · \($r.producer.invoker.version)" else "" end) |",
-              "| commit | `\($r.subject.commit[0:12])` |",
-              "| workflow | \($r.workflow.service):\($r.workflow.entrypoint) |",
-              "| covers | \([$r.tasks[] | select(.state == "passed") | .id] | join(", ")) |",
-              "| platform | \($r.tasks[0].platform) |")
-            end' | tee -a "$GITHUB_STEP_SUMMARY"
-
-      - name: lint
-        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified), 'lint') }}
-        run: go vet ./...
-
-      - name: unit
-        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified), 'unit') }}
-        run: go test ./...
-
-      - name: build
-        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified), 'build') }}
-        run: go build -trimpath -o /tmp/hello .
-
-      - name: deploy
-        run: echo "deploy to production"
+      - name: Fetch protected policy
+        run: git fetch origin main:refs/remotes/origin/main
+      - name: Install pinned Runner
+        run: go run ./cmd/demo-install
+      - name: Verify proof, execute missing checks, and simulate deployment
+        env:
+          RECEIVING_BRANCH: ${{ github.base_ref || github.ref_name }}
+        run: go run ./cmd/demo-ci --runner .runner-ci/bin/runner --branch "$RECEIVING_BRANCH"
+      - name: Preserve verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-verification
+          path: |
+            .runner-ci/plan.json
+            .runner-ci/evidence/
+            .runner-ci/final-receipt.json
+          if-no-files-found: ignore
