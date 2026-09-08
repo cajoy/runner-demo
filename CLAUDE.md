@@ -61,5 +61,8 @@ MCP and step 3 was skipped.
 - Never use `--signer local-alex`. That identity is Alex's.
 - `api:deploy` stops on purpose — deploying from a laptop is not supported. Do
   not try to route around it.
+- `executor_unavailable: docker` means this machine's container engine is not
+  running. Say so and stop. Do not give `build` a `runtime: host` to get the run
+  to pass: the receipt would claim a container result nothing produced.
 - If `lint` or `unit` fails, fix the code. Do not attach a receipt for a failed
   run, and do not skip tasks to make a run pass.

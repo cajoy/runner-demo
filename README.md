@@ -24,10 +24,49 @@ Add `-s -- --with-mcp` to also register Runner with Claude Code and Codex:
 curl -fsSL https://raw.githubusercontent.com/hap-team/runner-dist/main/install.sh | sh -s -- --with-mcp
 ```
 
-`~/.local/bin` needs to be on your `PATH`. You do not have to install anything
-else: the first `runner run` in this repository downloads the exact Runner that
-[`.local-ci/toolchain.lock`](.local-ci/toolchain.lock) pins, verifies every byte
-against that lock, and caches it.
+`~/.local/bin` needs to be on your `PATH`.
+
+Then get the repository, because every command below reads its workflow out of
+this working tree:
+
+```bash
+git clone https://github.com/hap-team/runner-demo.git
+cd runner-demo
+```
+
+`--project .` resolves against the directory you are standing in, so running it
+anywhere else reports the config it could not find and stops:
+
+```
+$ runner run --project . api:preflight
+error: config_read: /Users/you/projects/.local-ci/runner.yaml
+```
+
+## What the tasks need
+
+Runner brings no toolchain with it. It runs the tasks this repository declares,
+and those need what any Go checkout needs:
+
+| | needed by | why |
+| --- | --- | --- |
+| a Go toolchain | `lint`, `unit`, `smoke` | they declare `runtime: host` and run as processes on your machine |
+| Docker, or Apple `container` | `build` | it declares no `runtime`, so it runs in the image the lock pins |
+
+An engine that is installed but not started is not reachable, and Runner stops
+instead of quietly running the task somewhere else:
+
+```
+$ runner run --project . api:preflight
+error: executor_unavailable: docker
+```
+
+Start the engine and run it again. `.local-ci/runner.yaml` accepts `docker` or
+`apple-container`; nothing else is tried.
+
+What Runner does fetch is Runner. The first run in this repository downloads the
+exact version [`.local-ci/toolchain.lock`](.local-ci/toolchain.lock) pins,
+verifies every byte against that lock, and caches it — so the version the
+installer put on your `PATH` is not necessarily the one that runs here:
 
 ```
 $ runner run --project . api:preflight
@@ -53,7 +92,9 @@ production deploy.
 
 `lint` and `unit` declare `runtime: host`: they run as host processes using your
 own Go toolchain, in about 0.3 s each instead of ten seconds in a container.
-`build` keeps the pinned container. Their receipts record that difference, and
+`build` keeps the pinned container. Those are warm numbers — the first run on a
+machine also pulls the image and fills the Go build cache, and takes about half
+a minute. Their receipts record that difference, and
 it matters — `runner ci plan` scopes reuse by platform, so a host result from a
 laptop is deliberately not eligible to satisfy a Linux CI task. The simulated
 workflow here is more permissive than real verification would be.
