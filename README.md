@@ -83,8 +83,8 @@ installer put on your `PATH` is not necessarily the one that runs here:
 
 ```
 $ runner run --project . api:preflight
-installing Runner v0.8.26 from cajoy/runner-dist ...
-installed Runner v0.8.26 (size depends on platform), verified against .local-ci/toolchain.lock
+installing Runner v0.8.27 from cajoy/runner-dist ...
+installed Runner v0.8.27 (size depends on platform), verified against .local-ci/toolchain.lock
 ```
 
 That happens once per version, per machine. The lock declares no plugins, so
@@ -215,7 +215,7 @@ rather than accepting a claim:
 | | |
 | --- | --- |
 | you, at a terminal | `invoked by: terminal` |
-| an agent over MCP | `invoked by: runner-mcp · v0.8.26` |
+| an agent over MCP | `invoked by: runner-mcp · v0.8.27` |
 
 So "an agent changed this and shipped it" is visible in CI and in the dashboard,
 not just in a commit message. See [`CLAUDE.md`](CLAUDE.md) for the agent loop.

@@ -1,36 +1,24 @@
-{
-  "schema": "local-ci-toolchain-lock/v2",
-  "runner": {
-    "repository": "hap-team/runner",
-    "version": "v0.8.26",
-    "commit": "9dfe5e1c999a46c20236758827104f0d7d9cd6ff",
-    "protocol": "local-ci/v1",
-    "artifacts": {
-      "darwin-arm64": {
-        "file": "runner_v0.8.26_darwin_arm64",
-        "sha256": "72b93074976924ff144e927ddb9f19f0e81879e399183b2203e72780489879fb"
-      },
-      "linux-amd64": {
-        "file": "runner_v0.8.26_linux_amd64",
-        "sha256": "069a06ad071bbb09b874a8999d928ac94f43a51620810234dc48be5c0c48cbe3"
-      },
-      "linux-arm64": {
-        "file": "runner_v0.8.26_linux_arm64",
-        "sha256": "7041e5d8f0612fed7e17180bf6b05638bae41b37479a0de9e0da3aafcb48f10b"
-      }
-    }
-  },
-  "plugins": {},
-  "profiles": {
-    "go": {
-      "versions": {
-        "1.26": {
-          "image": "golang:1.26.3-bookworm"
-        },
-        "1.27": {
-          "image": "golang:1.27.1-bookworm"
-        }
-      }
-    }
-  }
-}
+schema: local-ci-toolchain-lock/v2
+runner:
+    repository: hap-team/runner
+    version: v0.8.27
+    commit: 55c48d477f35d51dda2eaac2a61f70bf13b35341
+    protocol: local-ci/v1
+    artifacts:
+        darwin-arm64:
+            file: runner_v0.8.27_darwin_arm64
+            sha256: ae3a4fe1a31a84720897fb1e4295788aa677fd59dc2818714043dc1d86692805
+        linux-amd64:
+            file: runner_v0.8.27_linux_amd64
+            sha256: 4f2ece03fe9220edb9f0b5d1beb7b3d504c9bc0dece95f53bd97f776e7f0122c
+        linux-arm64:
+            file: runner_v0.8.27_linux_arm64
+            sha256: 2f3b0cfa30328b8368292a9477089b442b81daf6ae46b5bbdafc8ab70e155f9b
+plugins: {}
+profiles:
+    go:
+        versions:
+            "1.26":
+                image: golang:1.26.3-bookworm
+            "1.27":
+                image: golang:1.27.1-bookworm
