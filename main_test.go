@@ -101,7 +101,7 @@ func TestPageRendersTheRatioAndTheChart(t *testing.T) {
 
 // The bar is a comparison: the reused row must be visibly shorter, or the page
 // states a saving it does not show.
-func TestChartShowsFewerJobsWithAReceipt(t *testing.T) {
+func TestChartShowsLessTimeWithAReceipt(t *testing.T) {
 	bars := content().Bars
 	if len(bars) != 2 {
 		t.Fatalf("bars = %d, want 2", len(bars))
@@ -116,7 +116,7 @@ func TestChartShowsFewerJobsWithAReceipt(t *testing.T) {
 		return count
 	}
 	if filled(bars[1]) >= filled(bars[0]) {
-		t.Fatalf("with-receipt bar is not shorter: %d vs %d", filled(bars[1]), filled(bars[0]))
+		t.Fatalf("with-receipt bar is not shorter: %d vs %d cells", filled(bars[1]), filled(bars[0]))
 	}
 }
 

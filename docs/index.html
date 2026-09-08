@@ -92,27 +92,30 @@
       <p class="punchline">The fourth one is your laptop.</p>
     </section>
 
-    <p class="lede">Agentic AI turned out to be a CPU story: the orchestration
-       around the model, not the model. That work is a build, a test suite, a
-       container — and it runs just as well on the machine that already has the
-       source, the caches, and the warm containers.</p>
+    <p class="lede">Intel says some customers now buy four CPUs for every GPU
+       they order for agentic work. AMD says the ratio is heading for one to
+       one, and that the demand is additive rather than a shift away from
+       accelerators. Both are describing the orchestration around the model,
+       not the model: a build, a test suite, a container. That work runs just
+       as well on the machine that already has the source, the caches and the
+       warm containers.</p>
 
     <section class="panel">
-      <h2>What CI ran for a commit like this one</h2>
+      <h2>CI time for one pull request</h2>
       
       <div class="bar">
         <span class="bar-label">without a receipt</span>
         <span class="bar-track" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>
-        <span class="bar-value">4 jobs</span>
+        <span class="bar-value">14 min</span>
       </div>
       
       <div class="bar">
         <span class="bar-label">with a receipt</span>
-        <span class="bar-track" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></span>
-        <span class="bar-value">1 job</span>
+        <span class="bar-track" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></span>
+        <span class="bar-value">8 min</span>
       </div>
       
-      <p class="note">Across 51 public repositories, a median 42.7% of check runs re-proved already-proven content.</p>
+      <p class="note">Measured over 30 days of one large public repository: a pull request ran about 14 job-minutes. Across 51 repositories a median 42.7% of check runs re-proved already-proven content, and the second row is that share removed.</p>
     </section>
 
     <p>Run the preflight workflow locally, then inspect its task receipts and
@@ -121,7 +124,7 @@
        signed receipt or that CI skipped its tasks. The receipt does that.</p>
 
     <footer>
-      Served at 2026-09-08T16:03:27Z · <code>runner run --project . api:preflight</code>
+      Served at 2026-09-08T16:08:45Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>

@@ -59,10 +59,11 @@ func barCells(value, max int) []bool {
 }
 
 func content() Page {
-	// CI runs lint, unit, build and deploy. A receipt that covers the first
-	// three leaves only deploy. These are stated here, not measured here: the
-	// receipt is what proves them.
-	const withoutReceipts, withReceipts = 4, 1
+	// Job-minutes for one pull request. Both inputs are measured and neither is
+	// measured here: the 14 comes from 30 days of one large public repository,
+	// and the second row is that figure minus the 42.7% median re-proof share
+	// found across 51 repositories.
+	const withoutReceipts, withReceipts = 14, 8
 	return Page{
 		Title:     "Runner demo",
 		Heading:   "Runner demo",
@@ -70,21 +71,22 @@ func content() Page {
 		Ratio:     "4 : 1",
 		RatioNote: "CPUs bought per GPU for agentic work — Intel, 2026",
 		Punchline: "The fourth one is your laptop.",
-		Chart:     "What CI ran for a commit like this one",
+		Chart:     "CI time for one pull request",
 		Bars: []Bar{
 			{
 				Label: "without a receipt",
-				Value: "4 jobs",
+				Value: "14 min",
 				Cells: barCells(withoutReceipts, withoutReceipts),
 			},
 			{
 				Label: "with a receipt",
-				Value: "1 job",
+				Value: "8 min",
 				Cells: barCells(withReceipts, withoutReceipts),
 			},
 		},
-		Note: "Across 51 public repositories, a median 42.7% of check runs re-proved " +
-			"already-proven content.",
+		Note: "Measured over 30 days of one large public repository: a pull request ran " +
+			"about 14 job-minutes. Across 51 repositories a median 42.7% of check runs " +
+			"re-proved already-proven content, and the second row is that share removed.",
 		Built: time.Now().UTC().Format(time.RFC3339),
 	}
 }
