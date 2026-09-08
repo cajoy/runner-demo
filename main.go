@@ -30,8 +30,8 @@ type Page struct {
 func content() Page {
 	return Page{
 		Title:   "Runner demo",
-		Heading: "Verified on a laptop",
-		Tagline: "This page was built once and never rebuilt in CI.",
+		Heading: "Runner demo",
+		Tagline: "Local verification, task receipts, and a shareable page.",
 		Built:   time.Now().UTC().Format(time.RFC3339),
 	}
 }

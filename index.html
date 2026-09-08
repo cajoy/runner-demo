@@ -23,9 +23,9 @@
   <main>
     <h1>{{.Heading}}</h1>
     <p class="tagline">{{.Tagline}}</p>
-    <p>A local run signed a receipt bound to this exact commit. CI read that
-       receipt, skipped every step it already covered, and went straight to
-       deploy.</p>
+    <p>Run the preflight workflow locally, then inspect its task receipts and
+       compare the next run. This static preview shows the demo UI; it does not
+       certify that this commit has a signed receipt or that CI skipped its tasks.</p>
     <footer>
       Served at {{.Built}} · <code>runner run --project . api:preflight</code>
     </footer>
