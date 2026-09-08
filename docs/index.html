@@ -4,52 +4,87 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Runner demo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='4' fill='%23d2601a'/><rect x='4' y='7' width='8' height='2' rx='1' fill='%23fff'/></svg>">
 <style>
-  :root { color-scheme: light dark; }
+  :root {
+    color-scheme: light dark;
+     
+    --accent: light-dark(oklch(0.55 0.16 45), oklch(0.78 0.16 50));
+    --amber:  light-dark(oklch(0.62 0.14 75), oklch(0.82 0.15 85));
+    --green:  light-dark(oklch(0.52 0.13 155), oklch(0.78 0.14 150));
+    --fg:     light-dark(oklch(0.22 0.01 60), oklch(0.94 0.005 80));
+    --fg-2:   light-dark(oklch(0.42 0.01 60), oklch(0.72 0.008 70));
+    --fg-3:   light-dark(oklch(0.55 0.01 60), oklch(0.60 0.008 65));
+    --bg:     light-dark(oklch(0.99 0.004 80), oklch(0.16 0.006 60));
+    --surface:light-dark(oklch(0.97 0.006 75), oklch(0.20 0.006 60));
+    --line:   light-dark(oklch(0.89 0.008 70), oklch(0.30 0.008 60));
+  }
+  * { box-sizing: border-box; }
   body {
     margin: 0; min-height: 100vh; display: grid; place-items: center;
-    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-    background: Canvas; color: CanvasText;
+    font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(900px 500px at 85% -12%, color-mix(in oklch, var(--accent) 13%, transparent), transparent 60%),
+      radial-gradient(700px 420px at -10% 30%, color-mix(in oklch, var(--green) 9%, transparent), transparent 62%),
+      var(--bg);
+    color: var(--fg);
   }
-  main { max-width: 40rem; padding: 2rem; }
-  h1 { font-size: 2.25rem; line-height: 1.2; margin: 0 0 0.5rem; letter-spacing: -0.02em; }
-  h2 { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-       opacity: 0.6; margin: 0 0 0.75rem; }
-  p { margin: 0 0 1rem; }
-  .tagline { font-size: 1.125rem; }
-  .rule { border: 0; border-top: 1px solid;
-          border-color: color-mix(in srgb, CanvasText 15%, transparent); margin: 2rem 0; }
+  main { max-width: 42rem; padding: 3rem 2rem; }
+
+  .eyebrow { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 0.75rem;
+             color: var(--accent); font-size: 0.75rem; font-weight: 600;
+             letter-spacing: 0.14em; text-transform: uppercase; }
+  .eyebrow i { height: 1px; flex: 1; background: var(--line); }
+  h1 { font-size: 2.5rem; line-height: 1.15; margin: 0 0 0.5rem; letter-spacing: -0.03em; }
+  h2 { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+       color: var(--fg-3); margin: 0 0 1rem; }
+  p { margin: 0 0 1.15rem; color: var(--fg-2); }
+  .tagline { font-size: 1.15rem; color: var(--fg); margin-bottom: 2rem; }
+  .lede { color: var(--fg); }
 
    
-  .ratio { text-align: center; margin: 0 0 2rem; }
-  .ratio-figure { font-size: 4.5rem; line-height: 1; font-weight: 600; letter-spacing: -0.03em;
-                  font-variant-numeric: tabular-nums; }
-  .ratio-note { font-size: 0.875rem; opacity: 0.65; margin: 0.5rem 0 0; }
-  .punchline { font-size: 1.25rem; font-weight: 600; margin: 1rem 0 0; }
+  .ratio { text-align: center; padding: 2.25rem 1.5rem; margin: 0 0 2rem;
+           border: 1px solid var(--line); border-radius: 14px;
+           background: color-mix(in oklch, var(--surface) 78%, transparent); }
+  .ratio-figure { font-size: 5rem; line-height: 1; font-weight: 700; letter-spacing: -0.05em;
+                  font-variant-numeric: tabular-nums; color: var(--accent); }
+  .ratio-note { font-size: 0.875rem; color: var(--fg-3); margin: 0.9rem 0 0; }
+  .punchline { font-size: 1.35rem; font-weight: 650; color: var(--fg);
+               letter-spacing: -0.015em; margin: 1.4rem 0 0; }
+
+  .panel { padding: 1.5rem; border: 1px solid var(--line); border-radius: 14px;
+           background: color-mix(in oklch, var(--surface) 78%, transparent); margin: 0 0 1.75rem; }
 
    
-  .bar { display: grid; grid-template-columns: 9rem 1fr auto; gap: 0.75rem;
-         align-items: center; margin-bottom: 0.5rem; font-size: 0.9375rem; }
-  .bar-label { opacity: 0.75; }
-  .bar-track { display: flex; gap: 2px; }
-  .bar-track i { height: 1.125rem; flex: 1;
-                 background: color-mix(in srgb, CanvasText 12%, transparent); border-radius: 1px; }
-  .bar-track i.on { background: color-mix(in srgb, CanvasText 72%, transparent); }
-  .bar-value { font-variant-numeric: tabular-nums; opacity: 0.75; }
-  .note { font-size: 0.8125rem; opacity: 0.65; margin-top: 1rem; }
+  .bar { display: grid; grid-template-columns: 8.5rem 1fr 4rem; gap: 0.9rem;
+         align-items: center; margin-bottom: 0.65rem; font-size: 0.9375rem; }
+  .bar-label { color: var(--fg-2); }
+  .bar-track { display: flex; gap: 3px; }
+  .bar-track i { height: 1.4rem; flex: 1; border-radius: 2px;
+                 background: color-mix(in oklch, var(--fg) 8%, transparent); }
+  .bar:first-of-type .bar-track i.on { background: var(--amber); }
+  .bar:last-of-type  .bar-track i.on { background: var(--green); }
+  .bar-value { text-align: right; font-variant-numeric: tabular-nums;
+               font-weight: 600; color: var(--fg); }
+  .note { font-size: 0.8125rem; color: var(--fg-3); margin: 1.1rem 0 0; }
 
-  footer { font-size: 0.8125rem; opacity: 0.65; border-top: 1px solid;
-           border-color: color-mix(in srgb, CanvasText 15%, transparent);
-           padding-top: 1rem; margin-top: 2rem; }
-  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.875em; }
+  footer { font-size: 0.8125rem; color: var(--fg-3);
+           border-top: 1px solid var(--line); padding-top: 1.1rem; margin-top: 2.25rem; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.875em;
+         color: var(--accent); }
+
+  @media (max-width: 34rem) {
+    .ratio-figure { font-size: 3.5rem; }
+    .bar { grid-template-columns: 1fr; gap: 0.3rem; }
+    .bar-value { text-align: left; }
+  }
 </style>
 </head>
 <body>
   <main>
+    <p class="eyebrow">Portable CI<i></i></p>
     <h1>Runner demo</h1>
     <p class="tagline">Local verification, task receipts, and a shareable page.</p>
-
-    <hr class="rule">
 
     <section class="ratio">
       <div class="ratio-figure">4 : 1</div>
@@ -57,12 +92,12 @@
       <p class="punchline">The fourth one is your laptop.</p>
     </section>
 
-    <p>Agentic AI turned out to be a CPU story: the orchestration around the
-       model, not the model. That work is a build, a test suite, a container —
-       and it runs just as well on the machine that already has the source, the
-       caches, and the warm containers.</p>
+    <p class="lede">Agentic AI turned out to be a CPU story: the orchestration
+       around the model, not the model. That work is a build, a test suite, a
+       container — and it runs just as well on the machine that already has the
+       source, the caches, and the warm containers.</p>
 
-    <section>
+    <section class="panel">
       <h2>What CI ran for a commit like this one</h2>
       
       <div class="bar">
@@ -86,7 +121,7 @@
        signed receipt or that CI skipped its tasks. The receipt does that.</p>
 
     <footer>
-      Served at 2026-09-08T15:56:48Z · <code>runner run --project . api:preflight</code>
+      Served at 2026-09-08T16:03:27Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>
