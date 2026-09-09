@@ -93,6 +93,13 @@ func TestPageRendersTheRatioAndTheChart(t *testing.T) {
 			t.Fatalf("page is missing bar %q", bar.Label)
 		}
 	}
+	for _, beat := range page.Beats {
+		for _, want := range append([]string{beat.Verb, beat.Foot}, beat.Lines...) {
+			if !strings.Contains(body, want) {
+				t.Fatalf("page is missing beat text %q", want)
+			}
+		}
+	}
 	for _, metric := range page.Metrics {
 		if !strings.Contains(body, metric.Value) || !strings.Contains(body, metric.Label) {
 			t.Fatalf("page is missing metric %q", metric.Label)

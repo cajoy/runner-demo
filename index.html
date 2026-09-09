@@ -55,6 +55,17 @@
                box-decoration-break: clone; -webkit-box-decoration-break: clone;
                padding: 0.08em 0.28em; border-radius: 5px; }
 
+  /* Run, prove, skip: the causal chain, three columns wide so the verbs sit on
+     one line and read as a sequence rather than a list. */
+  .triad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+           gap: 2rem; margin: 0 0 2.25rem; }
+  .beat p { margin: 0 0 0.55rem; font-size: 0.9375rem; }
+  .beat-verb { font-size: 2rem; line-height: 1.1; font-weight: 700; color: var(--fg);
+               letter-spacing: -0.03em; margin: 0 0 0.75rem; padding-bottom: 0.75rem;
+               border-bottom: 2px solid var(--accent); }
+  /* The closing line of each beat is the consequence, so it takes the accent. */
+  .beat-foot { color: var(--accent); font-weight: 600; font-size: 0.8125rem; margin: 0.7rem 0 0; }
+
   /* One panel, not two: the figure states the claim and the lanes and timings
      evidence it, so they belong side by side rather than stacked with empty
      centres. The figure column is fixed; the evidence takes the rest. */
@@ -133,6 +144,7 @@
 
   @media (max-width: 76rem) {
     .layout { grid-template-columns: 1fr; gap: 1.75rem; }
+    .triad { gap: 1.5rem; }
     .hero { grid-template-columns: 1fr; gap: 1.5rem; }
     .hero-figure { border-right: 0; padding-right: 0;
                    border-bottom: 1px solid var(--line); padding-bottom: 1.25rem; }
@@ -141,6 +153,8 @@
   }
   @media (max-width: 34rem) {
     .ratio-figure { font-size: 3rem; }
+    .triad { grid-template-columns: 1fr; gap: 1.25rem; }
+    .beat-verb { font-size: 1.6rem; }
     .metrics { grid-template-columns: 1fr; gap: 0.75rem; }
     .bar { grid-template-columns: 1fr; gap: 0.3rem; }
     .bar-value { text-align: left; }
@@ -154,6 +168,16 @@
       <p class="eyebrow">Portable CI<i></i></p>
       <h1>{{.Heading}}</h1>
       <p class="tagline">{{.Tagline}}</p>
+
+      <section class="triad">
+        {{range .Beats}}
+        <div class="beat">
+          <p class="beat-verb">{{.Verb}}</p>
+          {{range .Lines}}<p>{{.}}</p>{{end}}
+          <p class="beat-foot">{{.Foot}}</p>
+        </div>
+        {{end}}
+      </section>
 
       <section class="hero">
         <div class="hero-figure">
@@ -224,13 +248,11 @@
           <h2><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.2 4.4h11.6M2.2 8h8.4M2.2 11.6h5.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>Runner</h2>
           <p>One workflow, run anywhere: your laptop, cloud CI, an edge machine, or inside an enterprise network.</p>
           <ul>
-            <li>One 9 MB binary: CLI, MCP server, dashboard, receipt signing and the reuse check</li>
             <li>Built for agentic flows, and fits any pipeline you already run</li>
             <li>One local state behind CLI, MCP and dashboard</li>
             <li>Agents only run workflows already in the repo, and Runner records who ran it, so it cannot be faked</li>
             <li>Docker, Apple Container or the host, with more providers added as pinned plugins</li>
             <li>Reuse only while source, toolchain, runtime and policy match</li>
-            <li>No hosted runner minutes</li>
           </ul>
         </aside>
       </div>

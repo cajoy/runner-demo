@@ -51,6 +51,16 @@
                padding: 0.08em 0.28em; border-radius: 5px; }
 
    
+  .triad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+           gap: 2rem; margin: 0 0 2.25rem; }
+  .beat p { margin: 0 0 0.55rem; font-size: 0.9375rem; }
+  .beat-verb { font-size: 2rem; line-height: 1.1; font-weight: 700; color: var(--fg);
+               letter-spacing: -0.03em; margin: 0 0 0.75rem; padding-bottom: 0.75rem;
+               border-bottom: 2px solid var(--accent); }
+   
+  .beat-foot { color: var(--accent); font-weight: 600; font-size: 0.8125rem; margin: 0.7rem 0 0; }
+
+   
   .hero { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 2.5rem;
           align-items: center; padding: 1.75rem 2rem; margin: 0 0 1.75rem;
           border: 1px solid color-mix(in oklch, var(--accent) 38%, var(--line));
@@ -119,6 +129,7 @@
 
   @media (max-width: 76rem) {
     .layout { grid-template-columns: 1fr; gap: 1.75rem; }
+    .triad { gap: 1.5rem; }
     .hero { grid-template-columns: 1fr; gap: 1.5rem; }
     .hero-figure { border-right: 0; padding-right: 0;
                    border-bottom: 1px solid var(--line); padding-bottom: 1.25rem; }
@@ -127,6 +138,8 @@
   }
   @media (max-width: 34rem) {
     .ratio-figure { font-size: 3rem; }
+    .triad { grid-template-columns: 1fr; gap: 1.25rem; }
+    .beat-verb { font-size: 1.6rem; }
     .metrics { grid-template-columns: 1fr; gap: 0.75rem; }
     .bar { grid-template-columns: 1fr; gap: 0.3rem; }
     .bar-value { text-align: left; }
@@ -140,6 +153,28 @@
       <p class="eyebrow">Portable CI<i></i></p>
       <h1>Runner demo</h1>
       <p class="tagline">Verify once. Sign automatically. Carry proof with git push.</p>
+
+      <section class="triad">
+        
+        <div class="beat">
+          <p class="beat-verb">Run.</p>
+          <p>9 MB binary. CLI, MCP server and dashboard over one local state.</p><p>A DAG, so independent checks start together.</p>
+          <p class="beat-foot">laptop → cloud CI → edge → enterprise</p>
+        </div>
+        
+        <div class="beat">
+          <p class="beat-verb">Prove.</p>
+          <p>Ed25519 over the receipt bytes, bound to commit, tree and config digest.</p><p>A policy file on main names which keys are trusted.</p>
+          <p class="beat-foot">a dirty tree signs nothing</p>
+        </div>
+        
+        <div class="beat">
+          <p class="beat-verb">Skip.</p>
+          <p>CI runs nothing the proof covers. Not faster checks, absent ones.</p><p>The whole preflight drops from 10.58 s to 0.66 s.</p>
+          <p class="beat-foot">0 hosted minutes</p>
+        </div>
+        
+      </section>
 
       <section class="hero">
         <div class="hero-figure">
@@ -221,20 +256,18 @@
           <h2><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.2 4.4h11.6M2.2 8h8.4M2.2 11.6h5.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>Runner</h2>
           <p>One workflow, run anywhere: your laptop, cloud CI, an edge machine, or inside an enterprise network.</p>
           <ul>
-            <li>One 9 MB binary: CLI, MCP server, dashboard, receipt signing and the reuse check</li>
             <li>Built for agentic flows, and fits any pipeline you already run</li>
             <li>One local state behind CLI, MCP and dashboard</li>
             <li>Agents only run workflows already in the repo, and Runner records who ran it, so it cannot be faked</li>
             <li>Docker, Apple Container or the host, with more providers added as pinned plugins</li>
             <li>Reuse only while source, toolchain, runtime and policy match</li>
-            <li>No hosted runner minutes</li>
           </ul>
         </aside>
       </div>
     </div>
 
     <footer>
-      Cool at 2026-09-09T14:06:51Z · <code>runner run --project . api:preflight</code>
+      Cool at 2026-09-09T14:12:50Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>

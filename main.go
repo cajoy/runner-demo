@@ -29,11 +29,20 @@ type Page struct {
 	Ratio     string
 	RatioNote string
 	Punchline string
+	Beats     []Beat
 	Chart     string
 	Bars      []Bar
 	Metrics   []Metric
 	Note      string
 	Built     string
+}
+
+// Beat is one of the three moves the demo argues for: run it, prove it, skip
+// what is proven. Copy and figures live here for the same reason the bars do.
+type Beat struct {
+	Verb  string
+	Lines []string
+	Foot  string
 }
 
 // Metric is a measured figure. It lives here rather than in the template for
@@ -81,7 +90,21 @@ func content() Page {
 		Ratio:     "3 → 0",
 		RatioNote: "Checks CI repeats when the original proof still verifies",
 		Punchline: "Run the checks. Keep their proof.",
-		Chart:     "Verification commands in the all-valid demo case",
+		Beats: []Beat{
+			{Verb: "Run.", Lines: []string{
+				"9 MB binary. CLI, MCP server and dashboard over one local state.",
+				"A DAG, so independent checks start together.",
+			}, Foot: "laptop \u2192 cloud CI \u2192 edge \u2192 enterprise"},
+			{Verb: "Prove.", Lines: []string{
+				"Ed25519 over the receipt bytes, bound to commit, tree and config digest.",
+				"A policy file on main names which keys are trusted.",
+			}, Foot: "a dirty tree signs nothing"},
+			{Verb: "Skip.", Lines: []string{
+				"CI runs nothing the proof covers. Not faster checks, absent ones.",
+				"The whole preflight drops from 10.58 s to 0.66 s.",
+			}, Foot: "0 hosted minutes"},
+		},
+		Chart: "Verification commands in the all-valid demo case",
 		Bars: []Bar{
 			{Label: "without a receipt", Value: "3 checks", Time: "10.58 s", Cells: barCells(withoutReceipts, withoutReceipts)},
 			{Label: "with a receipt", Value: "0 checks", Time: "0.66 s", Cells: barCells(withReceipts, withoutReceipts)},
