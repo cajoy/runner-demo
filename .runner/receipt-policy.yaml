@@ -54,11 +54,9 @@
   "tasks": {
     "lint": {
       "services": [
-        "api",
-        "api-linux"
+        "api"
       ],
       "platforms": [
-        "darwin/arm64",
         "linux/arm64"
       ],
       "verification": {
@@ -72,11 +70,9 @@
     },
     "unit": {
       "services": [
-        "api",
-        "api-linux"
+        "api"
       ],
       "platforms": [
-        "darwin/arm64",
         "linux/arm64"
       ],
       "verification": {
@@ -90,11 +86,9 @@
     },
     "build": {
       "services": [
-        "api",
-        "api-linux"
+        "api"
       ],
       "platforms": [
-        "darwin/arm64",
         "linux/arm64"
       ],
       "verification": {

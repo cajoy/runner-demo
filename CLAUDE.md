@@ -14,7 +14,11 @@ Signing keys are per machine: the private half never leaves the Keychain that ge
 
 With repository-local receipt setup, successful eligible runs sign automatically and ordinary `git push` carries code and notes. Do not add manual attach or separate notes-push steps to the normal flow. Respect an actionable guard failure; a concurrent notes merge may require another ordinary push.
 
-Host proof cannot substitute for pinned linux/arm64 proof. Use api-linux:preflight for evidence that the Linux CI verifier can reuse. Missing, expired, revoked, or otherwise ineligible evidence cannot authorize a skip. The standalone GitHub verifier falls back to normal checks for rejected, malformed, or conflicting proof. Runner's own integrity policy still applies to its separate commands.
+There is one local workflow, `api`, and every task in it runs in the pinned linux/arm64 image — the same one the GitHub job uses. That is deliberate: proof is scoped to the environment that produced it, so `api:preflight` is the only run needed and what it signs is eligible in CI. Do not reintroduce a host variant of these tasks; darwin proof cannot authorize a linux skip, and having both is what made the delivery step ambiguous. Missing, expired, revoked, or otherwise ineligible evidence cannot authorize a skip. The standalone GitHub verifier falls back to normal checks for rejected, malformed, or conflicting proof. Runner's own integrity policy still applies to its separate commands.
+
+The verifier rebuilds each task input from `.runner/receipt-contract.json`, and the service name and config digest are part of that identity. Renaming the service or editing `.local-ci/api.yaml` changes it, so the contract has to move in the same commit or every check reports subject_or_workflow_mismatch and runs fresh.
+
+Push with plain `git push`. An explicit refspec such as `git push origin main` overrides the configured ones and omits the notes ref, and the guard rejects it.
 
 api:deploy is a local simulation. It must reuse eligible preflight checks, restore the verified binary, and execute the simulation itself. Existing production approval requirements remain in force.
 

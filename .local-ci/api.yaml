@@ -1,9 +1,14 @@
 schema: local-ci/v2
 service: api
 default: preflight
+# One runtime for the whole service, and the same image digest the GitHub job
+# pins. Proof is scoped to the environment that produced it, so a check that
+# runs anywhere else cannot authorise skipping this one. Declaring the platform
+# rather than linux/native keeps the recorded platform equal to CI's on any
+# host that can run the image.
 runtime:
   image: golang:1.27.1-bookworm@sha256:648f440f42a0958804efb24df176f806f9d353b41f1c0627f666428e40310f6b
-  platform: linux/native
+  platform: linux/arm64
 env:
   GOENV: off
   GOWORK: off
@@ -12,26 +17,23 @@ env:
   GOFLAGS: "-buildvcs=false -trimpath -mod=readonly"
 tasks:
   lint:
-    runtime: host
     verification: {kind: go, exclude: [README.md, CLAUDE.md, docs]}
     run: go vet ./...
   unit:
-    runtime: host
     verification: {kind: go, exclude: [README.md, CLAUDE.md, docs]}
     run: go test -count=1 -cover ./...
   build:
-    runtime: host
     verification: {kind: go, exclude: [README.md, CLAUDE.md, docs]}
     run: go build -o .local-ci-out/server .
     artifacts:
       server: {path: .local-ci-out/server}
+  # smoke and deploy execute the artifact build produced, so they run in the
+  # same image. A linux/arm64 binary cannot be executed by the host.
   smoke:
-    runtime: host
     needs: [build]
     run: go run ./cmd/demo-deploy
   deploy-local:
     display_name: deploy
-    runtime: host
     placement: local
     needs: [lint, unit, build]
     run: go run ./cmd/demo-deploy

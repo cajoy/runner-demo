@@ -6,7 +6,7 @@ The static preview is at https://cajoy.github.io/runner-demo/. It explains the d
 
 ## Install and set up this clone
 
-Host checks require Go 1.27 or newer on PATH. Confirm it with `GOTOOLCHAIN=local go version`; Runner fingerprints that compiler before running the checks.
+The verification checks bring their own Go: they run in the pinned image, so nothing about your local toolchain can change their result. You still need Docker running, and Go 1.27 or newer on PATH for the installer below and for `go test ./...` on this repository itself. Confirm it with `GOTOOLCHAIN=local go version`.
 
 Install the repository's pinned Runner version with Go:
 
@@ -32,7 +32,7 @@ runner run --verbose --project . api:preflight
 runner run --verbose --project . api:deploy
 ```
 
-Preflight runs lint, unit, and build on the host with concurrency three, including on battery power. A clean passing run creates and signs receipts automatically. The next deploy run reuses eligible checks and restores the verified build artifact. It still runs the local deployment simulation, which renders `.local-ci-out/preview.html` from the server binary. It changes no production service.
+Preflight runs lint, unit, and build in the pinned image with concurrency three, including on battery power. A clean passing run creates and signs receipts automatically. The next deploy run reuses eligible checks and restores the verified build artifact. It still runs the local deployment simulation, which renders `.local-ci-out/preview.html` from the server binary. It changes no production service.
 
 Logs show `task.reused`, the original run and receipt references, and receipt status. The normal local dashboard is http://127.0.0.1:7331/.
 
@@ -44,21 +44,22 @@ runner run --verbose --project . --fresh api:preflight
 
 `--fresh` deliberately executes checks even when reusable proof exists. Dirty or failed runs keep diagnostic receipts but do not receive automatic portable signatures.
 
-## Deliver proof to Linux CI
+## Deliver proof to CI
 
-Host macOS proof is valid for matching host runs. The Linux CI workflow requires its own proof from the pinned Linux image:
+There is one workflow, and it runs where CI runs. Proof is scoped to the environment that produced it, so the checks execute in the same pinned `linux/arm64` image the GitHub job uses, and what you signed locally is eligible there:
 
 ```sh
-runner run --verbose --project . api-linux:preflight
 git push
 runner receipts status --project . --refresh
 ```
 
-The Linux workflow uses Docker with a pinned image and linux/arm64 platform. It runs the same three verification commands. Ordinary push carries its notes; Runner makes no second network push. If concurrent notes require a local merge, the guard explains the retry and you run `git push` again.
+That is the whole delivery step: the `api:preflight` you already ran produced the proof. Ordinary push carries its notes; Runner makes no second network push. If concurrent notes require a local merge, the guard explains the retry and you run `git push` again.
+
+`git push origin main` is not the same command. An explicit refspec replaces the two this clone was configured with, leaving the notes ref behind, and the guard refuses the push rather than delivering code without its proof.
 
 GitHub downloads the standalone `runner-receipt-verify` binary from `cajoy/runner-dist`, checks its pinned SHA256, then runs ordinary `lint`, `unit`, and `build` steps. The verifier reads policy and the receipt contract from the protected main ref and fetches signed Git notes. It verifies signatures, signer scope, proof age, task inputs, and the pinned Linux runtime. Each normal step skips only when its own receipt passes verification. Missing, rejected, malformed, or conflicting proof makes checks run normally. A download, verifier, or notes-fetch failure also runs the checks.
 
-The verifier source and tests live in the Runner repository. This demo contains the binary version/checksum pin and `.runner/receipt-contract.json`; it does not compile the verifier or install Runner in normal CI. The job runs in the same pinned Go image as `api-linux:preflight`. Its summary shows a decision for every task and the original run, receipt digest, and signer for reused checks. The uploaded `verification.json` also includes the actor and original proof time. The final `deploy (simulation)` step prints a message after successful checks; it requires no deployment artifact and changes no application.
+The verifier source and tests live in the Runner repository. This demo contains the binary version/checksum pin and `.runner/receipt-contract.json`; it does not compile the verifier or install Runner in normal CI. The job runs in the same pinned Go image as `api:preflight`, which is why proof produced on a laptop is eligible here at all. Its summary shows a decision for every task and the original run, receipt digest, and signer for reused checks. The uploaded `verification.json` also includes the actor and original proof time. The final `deploy (simulation)` step prints a message after successful checks; it requires no deployment artifact and changes no application.
 
 The receiver supports this demo's three fixed verification commands and Runner's v3 receipts with v2 content identities. Its reviewed workflow, configuration, and task-definition digests live in `.runner/receipt-contract.json`. Changing the workflow or verification recipe makes CI run fresh until that contract is updated on protected main. Source content is recomputed on each checkout, so README-only commits can still reuse proof. Unknown receipt versions run fresh.
 
