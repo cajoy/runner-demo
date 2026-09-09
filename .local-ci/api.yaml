@@ -22,10 +22,6 @@ tasks:
   unit:
     verification: {kind: go, exclude: [README.md, CLAUDE.md, docs]}
     run: go test -count=1 -cover ./...
-  # One command, and only go build. A verified task may run nothing else: Runner
-  # refuses a verification identity for any step containing a shell metacharacter
-  # or a command other than go test, vet or build, so rendering the page here
-  # would cost build its reusability. GitHub renders the page instead.
   build:
     verification: {kind: go, exclude: [README.md, CLAUDE.md, docs]}
     run: go build -o .local-ci-out/server .

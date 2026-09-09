@@ -18,7 +18,7 @@ There is one local workflow, `api`, and every task in it runs in the pinned linu
 
 The verifier rebuilds each task input from `.runner/receipt-contract.json`, and the service name and config digest are part of that identity. Renaming the service or editing `.local-ci/api.yaml` changes it, so the contract has to move in the same commit or every check reports subject_or_workflow_mismatch and runs fresh.
 
-The published page is a build output, not a file in the tree. `.github/workflows/pages.yml` runs `go run . -export` on every push to main and deploys that. Do not commit rendered HTML and do not add rendering to a verified task: Runner grants a verification identity only when every step is a bare `go test`, `go vet` or `go build` with no shell metacharacter, so a redirect or a second command in `build` costs that task its reusability.
+When asked to change the page, do the whole loop: edit `index.html`, regenerate `docs/index.html` with `go run . -export > docs/index.html` in the same commit, run `api:preflight` through the Runner MCP tools, then plain `git push`. GitHub Pages serves `docs/index.html` from main, so a template edit committed without the regenerated artifact deploys the previous page while every check stays green. The Page freshness workflow fails when they disagree; it is a separate workflow because the receipt contract pins demo.yml's digest.
 
 Push with plain `git push`. An explicit refspec such as `git push origin main` overrides the configured ones and omits the notes ref, and the guard rejects it.
 
