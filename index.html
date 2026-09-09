@@ -31,9 +31,9 @@
       var(--bg);
     color: var(--fg);
   }
-  /* Wide enough for the argument to keep its 42rem measure with the aside
-     beside it; the layout collapses before the text column gets narrow. */
-  main { max-width: 64rem; padding: 3rem 2rem; }
+  /* Use the screen. Panels, the chart and the DAG stretch to the full column;
+     running prose is capped separately so lines stay readable at this width. */
+  main { max-width: 88rem; padding: 3.25rem 3rem; }
 
   .eyebrow { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 0.75rem;
              color: var(--accent); font-size: 0.75rem; font-weight: 600;
@@ -45,6 +45,8 @@
   p { margin: 0 0 1.15rem; color: var(--fg-2); }
   .tagline { font-size: 1.15rem; color: var(--fg); margin-bottom: 2rem; }
   .lede { color: var(--fg); }
+  /* A line of prose stops being readable long before a panel does. */
+  .argument > p, .argument > .lede { max-width: 56rem; }
   /* The vendor claim is the reason the demo exists, so it carries the amber of
      work that did not need repeating. Cloned decoration so the mark survives a
      line wrap on a narrow viewport. */
@@ -110,18 +112,19 @@
   /* Two columns above 62rem, one below. The aside is deliberately narrow: it is
      reference material beside the argument, not a second argument, and more
      sections are expected under it. */
-  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 15.5rem;
-            gap: 2.5rem; align-items: start; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 20rem;
+            gap: 3rem; align-items: start; }
   /* One rail, so the grid has exactly two children. Without it a third child
      wraps back under the argument in column one. */
   .rail { display: grid; gap: 1.6rem; align-content: start; }
-  .side { font-size: 0.8125rem; line-height: 1.55; color: var(--fg-3);
-          border-left: 1px solid var(--line); padding-left: 1.25rem; }
+  /* fg-2 rather than fg-3: this column is read, not glanced at. */
+  .side { font-size: 0.8438rem; line-height: 1.6; color: var(--fg-2);
+          border-left: 1px solid var(--line); padding-left: 1.4rem; }
   .side h2 { margin-bottom: 0.55rem; }
-  .side p { margin: 0 0 0.7rem; color: var(--fg-2); }
+  .side p { margin: 0 0 0.7rem; color: var(--fg); }
   .side ul { margin: 0; padding-left: 1rem; display: grid; gap: 0.45rem; }
 
-  @media (max-width: 62rem) {
+  @media (max-width: 68rem) {
     .layout { grid-template-columns: 1fr; gap: 1.75rem; }
     .side { border-left: 0; border-top: 1px solid var(--line);
             padding-left: 0; padding-top: 1.25rem; }
