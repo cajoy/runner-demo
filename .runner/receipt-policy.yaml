@@ -19,6 +19,25 @@
         "darwin/arm64",
         "linux/arm64"
       ]
+    },
+    "local-alex-mbp": {
+      "public_key": "Bco+CQyOUciOZoA80grJpYNglFH0lFtfKIHaPn51Ya8=",
+      "repositories": [
+        "sha256:2bc11e6cd4da217b19a07b858421fa8198af7d44470acc614917952ca18cc7ca"
+      ],
+      "tasks": [
+        "lint",
+        "unit",
+        "build"
+      ],
+      "placements": [
+        "local",
+        "ci"
+      ],
+      "platforms": [
+        "darwin/arm64",
+        "linux/arm64"
+      ]
     }
   },
   "reuse": {
