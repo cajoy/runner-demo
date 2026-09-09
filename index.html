@@ -225,10 +225,15 @@
         <p class="note">{{.Note}}</p>
       </section>
 
-      <p>Run the preflight workflow locally, then inspect its task receipts and
-         compare the next run. This static preview shows the demo UI and the
-         numbers this page states; it does not certify that this commit has a
-         signed receipt or that CI skipped its tasks. The receipt does that.</p>
+      <p>Run the preflight locally, then run it again: the second run reuses the
+         proof instead of repeating the work. CI does the same from the other
+         side. It never asks whether a commit has a receipt — it recomputes the
+         content that was checked, matches it against a receipt a trusted key
+         signed, and skips only what that covers. Which is why reverting an edit
+         can be skipped too: the bytes were verified once already.</p>
+
+      <p>This page shows the interface and the numbers written into it. It
+         certifies nothing on its own. The receipt does that.</p>
       </div>
 
       <div class="rail">

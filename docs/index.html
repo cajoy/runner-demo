@@ -233,10 +233,15 @@
         <p class="note">Both timings are wall clock on one machine, process start to exit, executing and then reusing the same three checks. Runner checks the original signature, trusted policy, input content, and runtime before skipping lint, unit, or build.</p>
       </section>
 
-      <p>Run the preflight workflow locally, then inspect its task receipts and
-         compare the next run. This static preview shows the demo UI and the
-         numbers this page states; it does not certify that this commit has a
-         signed receipt or that CI skipped its tasks. The receipt does that.</p>
+      <p>Run the preflight locally, then run it again: the second run reuses the
+         proof instead of repeating the work. CI does the same from the other
+         side. It never asks whether a commit has a receipt — it recomputes the
+         content that was checked, matches it against a receipt a trusted key
+         signed, and skips only what that covers. Which is why reverting an edit
+         can be skipped too: the bytes were verified once already.</p>
+
+      <p>This page shows the interface and the numbers written into it. It
+         certifies nothing on its own. The receipt does that.</p>
       </div>
 
       <div class="rail">
@@ -267,7 +272,7 @@
     </div>
 
     <footer>
-      Rendered at 2026-09-09T16:07:14Z · <code>runner run --project . api:preflight</code>
+      Updated 1 at: 2026-09-09T16:18:30Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>
