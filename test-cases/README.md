@@ -1,6 +1,6 @@
 # Executable receipt scenarios
 
-Normal GitHub CI uses the standalone Go verifier and ordinary conditional check steps. Run `go test ./internal/receiptverify ./cmd/receipt-verify` for that receiver's signature, coverage, content, and delivery tests. Invalid proof runs normal checks. No Runner binary is needed for these tests.
+Normal GitHub CI downloads the checksum-pinned standalone Go verifier from `cajoy/runner-dist` and uses ordinary conditional check steps. The verifier source and its signature, coverage, content, and delivery tests live in Runner. Invalid proof runs normal checks.
 
 The opt-in scenarios below test Runner itself. Their GitHub workflow is `Runner dogfood (manual)` and runs only through an explicit dispatch.
 

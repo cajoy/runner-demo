@@ -4,6 +4,8 @@ Preserve unrelated dirty and untracked work. The source and public distribution 
 
 Implement tools and test harness logic in Go. Shell files are thin launchers.
 
+Normal GitHub CI downloads a checksum-pinned standalone verifier from cajoy/runner-dist. Keep verifier source/tests in Runner; keep only the public receipt contract and binary pin here. The contract comes from protected main and binds the normal workflow, task definitions, inputs, and runtime.
+
 Commit source before automatic signing. Run `runner run --actor agent --verbose --project . api:preflight`, or use Runner MCP, which records agent/mcp automatically. Keep host verification parallel with concurrency three.
 
 The approved existing signer for human and agent runs is local-alex. Actor metadata is separate from signing identity. Do not create another key or describe the actor label as authenticated identity.

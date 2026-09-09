@@ -26,22 +26,36 @@ jobs:
         id: policy
         continue-on-error: true
         run: git -c safe.directory="$GITHUB_WORKSPACE" fetch origin main:refs/remotes/origin/main
+      - name: Download receipt verifier
+        id: verifier
+        continue-on-error: true
+        env:
+          VERIFIER_VERSION: v0.8.29
+          VERIFIER_SHA256: d6b62fbaba18cadc5ac4ca20a31d9f8e8398d319a52a99da70d6ee38c5fb45ec
+        run: |
+          mkdir -p .runner-ci
+          curl --fail --location --silent --show-error \
+            "https://github.com/cajoy/runner-dist/releases/download/${VERIFIER_VERSION}/runner-receipt-verify_${VERIFIER_VERSION}_linux_arm64" \
+            --output .runner-ci/receipt-verify
+          printf '%s  %s\n' "$VERIFIER_SHA256" '.runner-ci/receipt-verify' | sha256sum --check --strict
+          chmod +x .runner-ci/receipt-verify
+          .runner-ci/receipt-verify --version
       - name: Verify receipts
         id: receipt
-        if: ${{ steps.policy.outcome == 'success' }}
+        if: ${{ steps.policy.outcome == 'success' && steps.verifier.outcome == 'success' }}
         continue-on-error: true
         env:
           RECEIVING_BRANCH: ${{ github.base_ref || github.ref_name }}
           RECEIPT_IMAGE: golang:1.27.1-bookworm@sha256:648f440f42a0958804efb24df176f806f9d353b41f1c0627f666428e40310f6b
-        run: go run ./cmd/receipt-verify --image "$RECEIPT_IMAGE" --branch "$RECEIVING_BRANCH"
+        run: .runner-ci/receipt-verify --image "$RECEIPT_IMAGE" --branch "$RECEIVING_BRANCH"
       - name: lint
-        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified || '[]'), 'lint') }}
+        if: ${{ steps.receipt.outcome != 'success' || !contains(fromJSON(steps.receipt.outputs.verified || '[]'), 'lint') }}
         run: go vet ./...
       - name: unit
-        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified || '[]'), 'unit') }}
+        if: ${{ steps.receipt.outcome != 'success' || !contains(fromJSON(steps.receipt.outputs.verified || '[]'), 'unit') }}
         run: go test -count=1 -cover ./...
       - name: build
-        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified || '[]'), 'build') }}
+        if: ${{ steps.receipt.outcome != 'success' || !contains(fromJSON(steps.receipt.outputs.verified || '[]'), 'build') }}
         run: go build -o .local-ci-out/server .
       - name: deploy (simulation)
         run: echo "Simulated deployment. All checks passed or had verified receipts; no application was deployed."

@@ -1,0 +1,36 @@
+{
+  "schema": "runner-receipt-contract/v1",
+  "repository": "cajoy/runner-demo",
+  "repository_id": "sha256:2bc11e6cd4da217b19a07b858421fa8198af7d44470acc614917952ca18cc7ca",
+  "service": "api-linux",
+  "config_digest": "sha256:22c519c9cb0ee0e254cd264261f763063d550d64806c2ebae9185601c87daa7b",
+  "workflow_path": ".github/workflows/demo.yml",
+  "workflow_digest": "sha256:fa5876f485809ca9076834593cca335ef9d9870568d7687e25adc186d078fe79",
+  "image": "golang:1.27.1-bookworm@sha256:648f440f42a0958804efb24df176f806f9d353b41f1c0627f666428e40310f6b",
+  "go_version": "go1.27.1",
+  "runtime": {
+    "driver": "docker",
+    "platform": "linux/arm64",
+    "image_digest": "sha256:648f440f42a0958804efb24df176f806f9d353b41f1c0627f666428e40310f6b"
+  },
+  "verification": {
+    "kind": "go",
+    "exclude": [
+      "README.md",
+      "CLAUDE.md",
+      "docs"
+    ]
+  },
+  "environment": {
+    "CGO_ENABLED": "0",
+    "GOENV": "off",
+    "GOFLAGS": "-buildvcs=false -trimpath -mod=readonly",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off"
+  },
+  "task_definitions": {
+    "build": "sha256:f17346f8353609fa13413c279b44eec1eb732ecdb43ebb62c163df99335e0d52",
+    "lint": "sha256:f837b0ce1395c8e689fd8e7b0022363e3cd25991aa6147b9726d56dc2a40be1c",
+    "unit": "sha256:b8e4ceaac33eabb4c31dd42ed392ac79cd1643ed22d6627311cb331f33b541aa"
+  }
+}
