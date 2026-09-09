@@ -51,22 +51,22 @@
                padding: 0.08em 0.28em; border-radius: 5px; }
 
    
-  .ratio { text-align: center; padding: 2.25rem 1.5rem; margin: 0 0 2rem;
-           border: 1px solid var(--line); border-radius: 14px;
-           background: color-mix(in oklch, var(--surface) 78%, transparent); }
-  .ratio-figure { font-size: 5rem; line-height: 1; font-weight: 700; letter-spacing: -0.05em;
+  .hero { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 2.5rem;
+          align-items: center; padding: 1.75rem 2rem; margin: 0 0 1.75rem;
+          border: 1px solid color-mix(in oklch, var(--accent) 38%, var(--line));
+          border-radius: 14px;
+          background: color-mix(in oklch, var(--accent) 6%, transparent); }
+  .hero-figure { text-align: center; border-right: 1px solid var(--line); padding-right: 2rem; }
+  .hero-detail { min-width: 0; }
+  .ratio-figure { font-size: 3.75rem; line-height: 1; font-weight: 700; letter-spacing: -0.05em;
                   font-variant-numeric: tabular-nums; color: var(--accent); }
   .ratio-note { font-size: 0.875rem; color: var(--fg-3); margin: 0.9rem 0 0; }
-  .punchline { font-size: 1.35rem; font-weight: 650; color: var(--fg);
-               letter-spacing: -0.015em; margin: 1.4rem 0 0; }
+  .punchline { font-size: 1.0625rem; font-weight: 650; color: var(--fg);
+               letter-spacing: -0.015em; margin: 1rem 0 0; }
 
   .panel { padding: 1.5rem; border: 1px solid var(--line); border-radius: 14px;
            background: color-mix(in oklch, var(--surface) 78%, transparent); margin: 0 0 1.75rem; }
 
-   
-  .dag { padding: 1.5rem; margin: 0 0 1.75rem; border-radius: 14px;
-         border: 1px solid color-mix(in oklch, var(--accent) 42%, var(--line));
-         background: color-mix(in oklch, var(--accent) 7%, transparent); }
   .lanes { display: grid; gap: 0.4rem; margin: 0 0 1.25rem; }
   .lane { display: grid; grid-template-columns: 4.5rem 1fr; gap: 0.75rem;
           align-items: center; font-size: 0.9375rem; }
@@ -75,9 +75,9 @@
    
   .lane:nth-of-type(2) i { background: color-mix(in oklch, var(--green) 78%, var(--accent)); }
   .lane:nth-of-type(3) i { background: color-mix(in oklch, var(--green) 55%, var(--accent)); }
-  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
-             gap: 1rem 1.1rem; margin: 0; }
-  .metric-value { font-size: 1.75rem; line-height: 1.1; font-weight: 700; color: var(--accent);
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+             gap: 0.9rem 1rem; margin: 0; }
+  .metric-value { font-size: 1.5rem; line-height: 1.1; font-weight: 700; color: var(--accent);
                   font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
   .metric-label { font-size: 0.75rem; color: var(--fg-3); margin: 0.25rem 0 0; }
 
@@ -110,17 +110,22 @@
    
   .side { font-size: 0.8438rem; line-height: 1.6; color: var(--fg-2);
           border-left: 1px solid var(--line); padding-left: 1.4rem; }
-  .side h2 { margin-bottom: 0.55rem; }
+  .side h2 { margin-bottom: 0.55rem; display: flex; align-items: center; gap: 0.45rem; }
+   
+  .ico { width: 1.05em; height: 1.05em; flex: none; color: var(--accent); }
   .side p { margin: 0 0 0.7rem; color: var(--fg); }
   .side ul { margin: 0; padding-left: 1rem; display: grid; gap: 0.45rem; }
 
   @media (max-width: 76rem) {
     .layout { grid-template-columns: 1fr; gap: 1.75rem; }
+    .hero { grid-template-columns: 1fr; gap: 1.5rem; }
+    .hero-figure { border-right: 0; padding-right: 0;
+                   border-bottom: 1px solid var(--line); padding-bottom: 1.25rem; }
     .side { border-left: 0; border-top: 1px solid var(--line);
             padding-left: 0; padding-top: 1.25rem; }
   }
   @media (max-width: 34rem) {
-    .ratio-figure { font-size: 3.5rem; }
+    .ratio-figure { font-size: 3rem; }
     .metrics { grid-template-columns: 1fr; gap: 0.75rem; }
     .bar { grid-template-columns: 1fr; gap: 0.3rem; }
     .bar-value { text-align: left; }
@@ -135,14 +140,14 @@
       <h1>Runner demo</h1>
       <p class="tagline">Verify once. Sign automatically. Carry proof with git push.</p>
 
-      <section class="ratio">
-        <div class="ratio-figure">3 → 0</div>
-        <p class="ratio-note">Repeated checks when all three original proofs remain valid</p>
-        <p class="punchline">Run the checks. Keep their proof.</p>
-      </section>
-
-      <section class="dag">
-        <h2>Parallel by default</h2>
+      <section class="hero">
+        <div class="hero-figure">
+          <div class="ratio-figure">3 → 0</div>
+          <p class="ratio-note">Repeated checks when all three original proofs remain valid</p>
+          <p class="punchline">Run the checks. Keep their proof.</p>
+        </div>
+        <div class="hero-detail">
+          <h2>Parallel by default</h2>
         <div class="lanes">
           <div class="lane"><span>lint</span><i></i></div>
           <div class="lane"><span>unit</span><i></i></div>
@@ -171,7 +176,8 @@
           </div>
           
         </dl>
-        <p class="note">Measured on one machine with a warm image cache.</p>
+          <p class="note">Measured on one machine with a warm image cache.</p>
+        </div>
       </section>
 
       <p class="lede"><strong class="highlight">Intel says some customers now buy
@@ -209,7 +215,7 @@
 
       <div class="rail">
         <aside class="side">
-          <h2>Receipt</h2>
+          <h2><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 1.6h9v12.8l-2.25-1.3-2.25 1.3-2.25-1.3-2.25 1.3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M6 5.6h4M6 8.3h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Receipt</h2>
           <p>What one finished run leaves behind.</p>
           <ul>
             <li>Ed25519 signature over the receipt bytes, carrying the signer id</li>
@@ -221,7 +227,7 @@
         </aside>
 
         <aside class="side">
-          <h2>Runner</h2>
+          <h2><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.2 4.4h11.6M2.2 8h8.4M2.2 11.6h5.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>Runner</h2>
           <p>One workflow, run anywhere: your laptop, cloud CI, an edge machine, or inside an enterprise network.</p>
           <ul>
             <li>One 9 MB binary: CLI, MCP server, dashboard, receipt signing and the reuse check</li>
@@ -237,7 +243,7 @@
     </div>
 
     <footer>
-      Cool at 2026-09-09T14:01:16Z · <code>runner run --project . api:preflight</code>
+      Cool at 2026-09-09T14:02:49Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>
