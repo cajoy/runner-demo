@@ -79,7 +79,8 @@
   /* Every lane starts at the same edge, which is the whole point. */
   .lane:nth-of-type(2) i { background: color-mix(in oklch, var(--green) 78%, var(--accent)); }
   .lane:nth-of-type(3) i { background: color-mix(in oklch, var(--green) 55%, var(--accent)); }
-  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0; }
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+             gap: 1rem 1.1rem; margin: 0; }
   .metric-value { font-size: 1.75rem; line-height: 1.1; font-weight: 700; color: var(--accent);
                   font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
   .metric-label { font-size: 0.75rem; color: var(--fg-3); margin: 0.25rem 0 0; }
@@ -162,6 +163,7 @@
           </div>
           {{end}}
         </dl>
+        <p class="note">Measured on one machine with a warm image cache.</p>
       </section>
 
       <p class="lede"><strong class="highlight">Intel says some customers now buy

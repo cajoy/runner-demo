@@ -89,6 +89,7 @@ func content() Page {
 		Metrics: []Metric{
 			{Value: "3", Label: "independent checks, started together"},
 			{Value: "38 ms", Label: "from run accepted to all three running"},
+			{Value: "6.96 s", Label: "cold container, until the first command runs"},
 			{Value: "0.66 s", Label: "whole preflight when every check reuses its proof"},
 		},
 		Note: "The two timings are from one pair of runs on one " +
