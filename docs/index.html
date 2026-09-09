@@ -190,10 +190,22 @@
           <li>A complete envelope can still report an <span class="unknown">unknown</span> outcome, and a consumer has to preserve that uncertainty rather than resolve it.</li>
         </ul>
       </aside>
+
+      <aside class="side">
+        <h2>Runner</h2>
+        <p>Repository-owned CI that executes on hardware you already have. The CLI, an MCP server and a loopback dashboard all read one canonical local state, so an agent and a person see the same run.</p>
+        <ul>
+          <li>Agents run checked-in selectors through MCP against durable project ids, rather than inventing shell commands. Runner stamps who invoked a run instead of accepting the claim.</li>
+          <li>Docker or Apple Container, whichever the repository configures. An unavailable driver is reported, never quietly swapped for the host.</li>
+          <li>Work is reused only while the source, toolchain, runtime and policy identities all still match. Anything else runs fresh.</li>
+          <li>A declared external write stops for an exact digest bound to the resolved work, and any relevant change invalidates that approval.</li>
+          <li>Checks proven on your own machine spend no hosted runner minutes.</li>
+        </ul>
+      </aside>
     </div>
 
     <footer>
-      Cool at 2026-09-09T13:00:24Z · <code>runner run --project . api:preflight</code>
+      Cool at 2026-09-09T13:05:24Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>
