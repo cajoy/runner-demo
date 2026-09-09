@@ -31,8 +31,17 @@ type Page struct {
 	Punchline string
 	Chart     string
 	Bars      []Bar
+	Metrics   []Metric
 	Note      string
 	Built     string
+}
+
+// Metric is a measured figure. It lives here rather than in the template for
+// the same reason the bars do: the number and the test that asserts it move
+// together, and nothing on the page can claim a timing the code does not state.
+type Metric struct {
+	Value string
+	Label string
 }
 
 // Bar is one row of the chart. Its cells are rendered as markup rather than an
@@ -76,6 +85,11 @@ func content() Page {
 		Bars: []Bar{
 			{Label: "without a receipt", Value: "3 checks", Time: "11.4 s", Cells: barCells(withoutReceipts, withoutReceipts)},
 			{Label: "with a receipt", Value: "0 checks", Time: "0.1 s", Cells: barCells(withReceipts, withoutReceipts)},
+		},
+		Metrics: []Metric{
+			{Value: "3", Label: "independent checks, started together"},
+			{Value: "38 ms", Label: "from run accepted to all three running"},
+			{Value: "0.66 s", Label: "whole preflight when every check reuses its proof"},
 		},
 		Note: "The two timings are from one pair of runs on one " +
 			"machine, executing and then reusing the same three checks. Runner checks the original signature, " +

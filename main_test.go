@@ -93,6 +93,11 @@ func TestPageRendersTheRatioAndTheChart(t *testing.T) {
 			t.Fatalf("page is missing bar %q", bar.Label)
 		}
 	}
+	for _, metric := range page.Metrics {
+		if !strings.Contains(body, metric.Value) || !strings.Contains(body, metric.Label) {
+			t.Fatalf("page is missing metric %q", metric.Label)
+		}
+	}
 	// A filled cell is what makes the comparison visible at all.
 	if !strings.Contains(body, `<i class="on">`) {
 		t.Fatal("chart rendered no filled cells")

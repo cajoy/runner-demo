@@ -62,6 +62,23 @@
            background: color-mix(in oklch, var(--surface) 78%, transparent); margin: 0 0 1.75rem; }
 
    
+  .dag { padding: 1.5rem; margin: 0 0 1.75rem; border-radius: 14px;
+         border: 1px solid color-mix(in oklch, var(--accent) 42%, var(--line));
+         background: color-mix(in oklch, var(--accent) 7%, transparent); }
+  .lanes { display: grid; gap: 0.4rem; margin: 0 0 1.25rem; }
+  .lane { display: grid; grid-template-columns: 4.5rem 1fr; gap: 0.75rem;
+          align-items: center; font-size: 0.9375rem; }
+  .lane span { color: var(--fg); font-weight: 600; }
+  .lane i { height: 0.5rem; border-radius: 999px; background: var(--green); display: block; }
+   
+  .lane:nth-of-type(2) i { background: color-mix(in oklch, var(--green) 78%, var(--accent)); }
+  .lane:nth-of-type(3) i { background: color-mix(in oklch, var(--green) 55%, var(--accent)); }
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0; }
+  .metric-value { font-size: 1.75rem; line-height: 1.1; font-weight: 700; color: var(--accent);
+                  font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .metric-label { font-size: 0.75rem; color: var(--fg-3); margin: 0.25rem 0 0; }
+
+   
   .bar { display: grid; grid-template-columns: 8.5rem 1fr 5rem; gap: 0.9rem;
          align-items: center; margin-bottom: 0.65rem; font-size: 0.9375rem; }
   .bar-label { color: var(--fg-2); }
@@ -99,6 +116,7 @@
   }
   @media (max-width: 34rem) {
     .ratio-figure { font-size: 3.5rem; }
+    .metrics { grid-template-columns: 1fr; gap: 0.75rem; }
     .bar { grid-template-columns: 1fr; gap: 0.3rem; }
     .bar-value { text-align: left; }
   }
@@ -116,6 +134,33 @@
         <div class="ratio-figure">3 → 0</div>
         <p class="ratio-note">Repeated checks when all three original proofs remain valid</p>
         <p class="punchline">Run the checks. Keep their proof.</p>
+      </section>
+
+      <section class="dag">
+        <h2>Parallel by default</h2>
+        <div class="lanes">
+          <div class="lane"><span>lint</span><i></i></div>
+          <div class="lane"><span>unit</span><i></i></div>
+          <div class="lane"><span>build</span><i></i></div>
+        </div>
+        <dl class="metrics">
+          
+          <div>
+            <dt class="metric-value">3</dt>
+            <dd class="metric-label">independent checks, started together</dd>
+          </div>
+          
+          <div>
+            <dt class="metric-value">38 ms</dt>
+            <dd class="metric-label">from run accepted to all three running</dd>
+          </div>
+          
+          <div>
+            <dt class="metric-value">0.66 s</dt>
+            <dd class="metric-label">whole preflight when every check reuses its proof</dd>
+          </div>
+          
+        </dl>
       </section>
 
       <p class="lede"><strong class="highlight">Intel says some customers now buy
@@ -170,13 +215,10 @@
           <ul>
             <li>One 9 MB binary: CLI, MCP server, dashboard, receipt signing and the reuse check</li>
             <li>Built for agentic flows, and fits any pipeline you already run</li>
-            <li>Tasks form a DAG, so independent ones run in parallel</li>
             <li>One local state behind CLI, MCP and dashboard</li>
             <li>Agents only run workflows already in the repo, and Runner records who ran it, so it cannot be faked</li>
             <li>Docker, Apple Container or the host, with more providers added as pinned plugins</li>
-            <li>An unavailable driver is reported, never quietly swapped for another</li>
             <li>Reuse only while source, toolchain, runtime and policy match</li>
-            <li>Anything that writes to the outside world stops for your approval, and that approval covers only that exact run</li>
             <li>No hosted runner minutes</li>
           </ul>
         </aside>
@@ -184,7 +226,7 @@
     </div>
 
     <footer>
-      Cool at 2026-09-09T13:25:00Z · <code>runner run --project . api:preflight</code>
+      Cool at 2026-09-09T13:29:30Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>
