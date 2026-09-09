@@ -87,17 +87,7 @@
   .side + .side { margin-top: 1.6rem; }
   .side h2 { margin-bottom: 0.55rem; }
   .side p { margin: 0 0 0.7rem; color: var(--fg-2); }
-  .side dl { margin: 0; display: grid; gap: 0.5rem; }
-  .side dt { color: var(--fg); font-weight: 600; }
-  .side dd { margin: 0.1rem 0 0; }
   .side ul { margin: 0; padding-left: 1rem; display: grid; gap: 0.45rem; }
-   
-  .groups { display: flex; flex-wrap: wrap; gap: 0.3rem 0.45rem; margin: 0.15rem 0 0;
-            padding: 0; list-style: none; }
-  .groups li { font-size: 0.6875rem; letter-spacing: 0.04em; text-transform: uppercase;
-               color: var(--fg-2); border: 1px solid var(--line); border-radius: 999px;
-               padding: 0.1rem 0.45rem; }
-  .unknown { color: var(--amber); font-weight: 600; }
 
   @media (max-width: 62rem) {
     .layout { grid-template-columns: 1fr; gap: 1.75rem; }
@@ -159,39 +149,6 @@
       </div>
 
       <aside class="side">
-        <h2>Receipt and signature</h2>
-        <p>A bounded record of one finished run, signed on the machine that produced it.</p>
-        <dl>
-          <dt>Signature</dt>
-          <dd>Ed25519 over the receipt bytes, carrying the signer id that made it.</dd>
-          <dt>Trust</dt>
-          <dd>Policy on protected main pins each signer's public key, scoped to repository, tasks, placement and platform.</dd>
-          <dt>Binding</dt>
-          <dd>Commit, tree and config digest, so proof cannot drift onto other code.</dd>
-          <dt>Integrity</dt>
-          <dd>A digest of immutable receipt bytes, with the time they were created.</dd>
-        </dl>
-      </aside>
-
-      <aside class="side">
-        <h2>Anatomy</h2>
-        <p>Seven groups, so ambiguity has somewhere to be recorded.</p>
-        <ul class="groups">
-          <li>Producer</li><li>Run identity</li><li>Subject</li><li>Outcome</li>
-          <li>Mutation</li><li>Authority</li><li>Integrity</li>
-        </ul>
-      </aside>
-
-      <aside class="side">
-        <h2>What it does not claim</h2>
-        <ul>
-          <li>A terminal outcome for one exact run. Not current runtime health, and not permission to run again.</li>
-          <li>Complete structure is not verification. Signatures, source bytes, policy and runtime are checked by the verifier.</li>
-          <li>A complete envelope can still report an <span class="unknown">unknown</span> outcome, and a consumer has to preserve that uncertainty rather than resolve it.</li>
-        </ul>
-      </aside>
-
-      <aside class="side">
         <h2>Runner</h2>
         <p>Repository-owned CI that executes on hardware you already have. The CLI, an MCP server and a loopback dashboard all read one canonical local state, so an agent and a person see the same run.</p>
         <ul>
@@ -205,7 +162,7 @@
     </div>
 
     <footer>
-      Cool at 2026-09-09T13:05:24Z · <code>runner run --project . api:preflight</code>
+      Cool at 2026-09-09T13:06:44Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>
