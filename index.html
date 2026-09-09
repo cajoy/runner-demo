@@ -90,9 +90,11 @@
      sections are expected under it. */
   .layout { display: grid; grid-template-columns: minmax(0, 1fr) 15.5rem;
             gap: 2.5rem; align-items: start; }
+  /* One rail, so the grid has exactly two children. Without it a third child
+     wraps back under the argument in column one. */
+  .rail { display: grid; gap: 1.6rem; align-content: start; }
   .side { font-size: 0.8125rem; line-height: 1.55; color: var(--fg-3);
           border-left: 1px solid var(--line); padding-left: 1.25rem; }
-  .side + .side { margin-top: 1.6rem; }
   .side h2 { margin-bottom: 0.55rem; }
   .side p { margin: 0 0 0.7rem; color: var(--fg-2); }
   .side ul { margin: 0; padding-left: 1rem; display: grid; gap: 0.45rem; }
@@ -150,29 +152,32 @@
          signed receipt or that CI skipped its tasks. The receipt does that.</p>
       </div>
 
-      <aside class="side">
-        <h2>Receipt</h2>
-        <p>What a finished run leaves behind: a bounded record of one exact run, signed on the machine that produced it.</p>
-        <ul>
-          <li>An Ed25519 signature over the receipt bytes, carrying the signer id. Policy on protected main pins that public key and the repository, tasks, placement and platform it covers.</li>
-          <li>Bound to a commit, a tree and a configuration digest, so proof cannot drift onto other code.</li>
-          <li>Honoured only while inputs, runtime and policy still match. Anything else and the check runs again.</li>
-          <li>It records how one run ended — not current health, and not permission to run again. An outcome it could not determine stays undetermined.</li>
-        </ul>
-      </aside>
+      <div class="rail">
+        <aside class="side">
+          <h2>Receipt</h2>
+          <p>What one finished run leaves behind.</p>
+          <ul>
+            <li>Ed25519 signature over the receipt bytes, carrying the signer id</li>
+            <li>Policy on protected main pins that key and the scope it covers</li>
+            <li>Bound to a commit, a tree and a configuration digest</li>
+            <li>Records how one run ended, not current health or permission to run again</li>
+            <li>An outcome it could not determine stays undetermined</li>
+          </ul>
+        </aside>
 
-      <aside class="side">
-        <h2>Runner</h2>
-        <p>Repository-owned CI, on hardware you already have.</p>
-        <ul>
-          <li>One local state behind CLI, MCP and dashboard</li>
-          <li>Agents run checked-in selectors; the invoker is stamped, not claimed</li>
-          <li>Docker or Apple Container; an unavailable driver is reported, not swapped</li>
-          <li>Reuse only while source, toolchain, runtime and policy match</li>
-          <li>External writes held for an exact digest</li>
-          <li>No hosted runner minutes</li>
-        </ul>
-      </aside>
+        <aside class="side">
+          <h2>Runner</h2>
+          <p>Repository-owned CI, on hardware you already have.</p>
+          <ul>
+            <li>One local state behind CLI, MCP and dashboard</li>
+            <li>Agents run checked-in selectors; the invoker is stamped, not claimed</li>
+            <li>Docker or Apple Container; an unavailable driver is reported, not swapped</li>
+            <li>Reuse only while source, toolchain, runtime and policy match</li>
+            <li>External writes held for an exact digest</li>
+            <li>No hosted runner minutes</li>
+          </ul>
+        </aside>
+      </div>
     </div>
 
     <footer>
