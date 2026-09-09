@@ -2,3 +2,5 @@
 .local-ci-out/
 .runner-ci/
 /runner-portable-ci-demo
+.DS_Store
+.idea/
