@@ -95,7 +95,7 @@ func content() Page {
 				"9 MB binary. CLI, MCP server and dashboard over one local state.",
 				"A DAG, so independent checks start together.",
 				"An agent runs the full workflow, or a selected step, over MCP.",
-			}, Foot: "laptop \u2192 cloud CI \u2192 edge \u2192 enterprise"},
+			}, Foot: "laptop \u00b7 cloud CI \u00b7 edge \u00b7 enterprise"},
 			{Verb: "Prove.", Lines: []string{
 				"Ed25519 over the receipt bytes, bound to commit, tree and config digest.",
 				"A policy file on main names which keys are trusted.",
