@@ -6,9 +6,11 @@ Implement tools and test harness logic in Go. Shell files are thin launchers.
 
 Normal GitHub CI downloads a checksum-pinned standalone verifier from cajoy/runner-dist. Keep verifier source/tests in Runner; keep only the public receipt contract and binary pin here. The contract comes from protected main and binds the normal workflow, task definitions, inputs, and runtime.
 
-Commit source before automatic signing. Run `runner run --actor agent --verbose --project . api:preflight`, or use Runner MCP, which records agent/mcp automatically. Keep host verification parallel with concurrency three.
+Commit source before automatic signing. Keep host verification parallel with concurrency three.
 
-The approved existing signer for human and agent runs is local-alex. Actor metadata is separate from signing identity. Do not create another key or describe the actor label as authenticated identity.
+When working through Claude Code, or any client with the Runner MCP server available, drive runs with the MCP tools rather than the `runner` binary: `runner_projects_list` for the durable `project_id`, then `runner_run` with the selector. Runner stamps the invoker from the process holding the MCP connection, so an MCP run records `agent/mcp` and a shelled-out one records the terminal default no matter what `--actor` claims. Reach for `runner run --actor agent --verbose --project . api:preflight` only where MCP is genuinely unavailable, and say which you used. Commands with no MCP tool — `receipts setup`, `receipts status`, `cleanup` — stay on the binary.
+
+Signing keys are per machine: the private half never leaves the Keychain that generated it, so each machine that signs needs its own entry in `.runner/receipt-policy.yaml`. The approved signers are exactly the ones that policy names, currently local-alex and local-alex-mbp. Do not mint a key to get past an untrusted or unavailable signer — a key the protected policy does not list signs nothing the verifier will accept, and adding one is the repository owner's decision. Actor metadata is separate from signing identity; never describe the actor label as authenticated identity.
 
 With repository-local receipt setup, successful eligible runs sign automatically and ordinary `git push` carries code and notes. Do not add manual attach or separate notes-push steps to the normal flow. Respect an actionable guard failure; a concurrent notes merge may require another ordinary push.
 

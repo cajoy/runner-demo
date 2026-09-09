@@ -43,6 +43,13 @@
   p { margin: 0 0 1.15rem; color: var(--fg-2); }
   .tagline { font-size: 1.15rem; color: var(--fg); margin-bottom: 2rem; }
   .lede { color: var(--fg); }
+  /* The vendor claim is the reason the demo exists, so it carries the amber of
+     work that did not need repeating. Cloned decoration so the mark survives a
+     line wrap on a narrow viewport. */
+  .highlight { font-weight: 700; color: var(--fg);
+               background: color-mix(in oklch, var(--amber) 24%, transparent);
+               box-decoration-break: clone; -webkit-box-decoration-break: clone;
+               padding: 0.08em 0.28em; border-radius: 5px; }
 
   /* The ratio is the slide. It should read from the back of a room. */
   .ratio { text-align: center; padding: 2.25rem 1.5rem; margin: 0 0 2rem;
@@ -95,8 +102,9 @@
       <p class="punchline">{{.Punchline}}</p>
     </section>
 
-    <p class="lede">Intel says some customers now buy four CPUs for every GPU
-       they order for agentic work. AMD says the ratio is heading for one to
+    <p class="lede"><strong class="highlight">Intel says some customers now buy
+       four CPUs for every GPU they order for agentic work.</strong> AMD says
+       the ratio is heading for one to
        one, and that the demand is additive rather than a shift away from
        accelerators. Both are describing the orchestration around the model,
        not the model: a build, a test suite, a container. That work runs just
