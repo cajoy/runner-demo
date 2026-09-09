@@ -33,7 +33,7 @@
   }
   /* Use the screen. Panels, the chart and the DAG stretch to the full column;
      running prose is capped separately so lines stay readable at this width. */
-  main { max-width: 88rem; padding: 3.25rem 3rem; }
+  main { max-width: 96rem; padding: 3.25rem 3rem; }
 
   .eyebrow { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 0.75rem;
              color: var(--accent); font-size: 0.75rem; font-weight: 600;
@@ -112,7 +112,9 @@
   /* Two columns above 62rem, one below. The aside is deliberately narrow: it is
      reference material beside the argument, not a second argument, and more
      sections are expected under it. */
-  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 20rem;
+  /* Rail grows, main grows by the same amount, so the argument column stays
+     at 59rem: 96 - 6 padding - 3 gap - 28 rail. */
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 28rem;
             gap: 3rem; align-items: start; }
   /* One rail, so the grid has exactly two children. Without it a third child
      wraps back under the argument in column one. */
@@ -124,7 +126,7 @@
   .side p { margin: 0 0 0.7rem; color: var(--fg); }
   .side ul { margin: 0; padding-left: 1rem; display: grid; gap: 0.45rem; }
 
-  @media (max-width: 68rem) {
+  @media (max-width: 76rem) {
     .layout { grid-template-columns: 1fr; gap: 1.75rem; }
     .side { border-left: 0; border-top: 1px solid var(--line);
             padding-left: 0; padding-top: 1.25rem; }
