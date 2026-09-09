@@ -2,7 +2,7 @@
 
 Runner runs lint, unit tests, and build in parallel, then signs their proof automatically. Later runs reuse a check only when its declared inputs, runtime, and trusted policy still match. Ordinary `git push` carries the signed receipts after one-time setup.
 
-The static preview is at https://cajoy.github.io/runner-demo/. It explains the demo; the CLI, local dashboard, and GitHub job summary show evidence from actual runs.
+The static preview is at https://cajoy.github.io/runner-demo/. It is rendered from `index.html` by the demo binary on every push to main, so it cannot fall behind the template; no HTML artifact is committed. It explains the demo; the CLI, local dashboard, and GitHub job summary show evidence from actual runs.
 
 ## Install and set up this clone
 

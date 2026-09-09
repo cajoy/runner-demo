@@ -1,0 +1,41 @@
+# The published page is rendered here rather than committed. A template edit is
+# enough: nothing has to remember to regenerate an artifact, and there is no file
+# in the tree that can fall behind what the binary renders.
+name: Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+# One deployment at a time, and a newer push supersedes an older one in flight.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  publish:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: go.mod
+      # The same -export the demo binary serves locally, so the published page and
+      # the page you get from `go run .` come from one template.
+      - name: Render the page
+        run: |
+          mkdir -p _site
+          go run . -export > _site/index.html
+          test -s _site/index.html
+          grep -q '{{' _site/index.html && exit 1 || true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4
