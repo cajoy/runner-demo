@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"runtime"
 	"sort"
 	"strconv"
@@ -30,7 +31,13 @@ func (b *limitedBuffer) Write(p []byte) (int, error) {
 	return b.Buffer.Write(p)
 }
 func git(ctx context.Context, root string, args ...string) ([]byte, error) {
-	cmd := exec.CommandContext(ctx, "git", append([]string{"--no-replace-objects"}, args...)...)
+	absolute, err := filepath.Abs(root)
+	if err != nil {
+		return nil, err
+	}
+	// Actions checks out as the host user, then runs this Go image as root.
+	// Trust only the requested checkout, only for this Git invocation.
+	cmd := exec.CommandContext(ctx, "git", append([]string{"--no-replace-objects", "-c", "safe.directory=" + absolute}, args...)...)
 	cmd.Dir = root
 	cmd.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0", "GIT_NO_REPLACE_OBJECTS=1")
 	out, errs := &limitedBuffer{limit: 16 << 20}, &limitedBuffer{limit: 4096}

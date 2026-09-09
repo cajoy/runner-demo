@@ -20,7 +20,7 @@ const (
 	ConfigDigest = "sha256:22c519c9cb0ee0e254cd264261f763063d550d64806c2ebae9185601c87daa7b"
 	// Bind the receiver's fixed recipe to the ordinary CI commands too. A
 	// stricter/new workflow must not accidentally inherit older task proof.
-	WorkflowDigest = "sha256:8b96fa9b8c2618a638a280110258573a997ca5308b7561fe6841ba0bb095f686"
+	WorkflowDigest = "sha256:a3626fe9f7cd8774c4a99e1f696ca01dbe648a5b542a5643e024732de9d8cbe6"
 )
 
 var TaskNames = []string{"lint", "unit", "build"}
