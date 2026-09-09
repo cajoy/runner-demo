@@ -79,22 +79,22 @@ func content() Page {
 		Heading:   "Runner demo",
 		Tagline:   "Verify once. Sign automatically. Carry proof with git push.",
 		Ratio:     "3 → 0",
-		RatioNote: "Repeated checks when all three original proofs remain valid",
+		RatioNote: "Checks CI repeats when the original proof still verifies",
 		Punchline: "Run the checks. Keep their proof.",
 		Chart:     "Verification commands in the all-valid demo case",
 		Bars: []Bar{
-			{Label: "without a receipt", Value: "3 checks", Time: "11.4 s", Cells: barCells(withoutReceipts, withoutReceipts)},
-			{Label: "with a receipt", Value: "0 checks", Time: "0.1 s", Cells: barCells(withReceipts, withoutReceipts)},
+			{Label: "without a receipt", Value: "3 checks", Time: "10.58 s", Cells: barCells(withoutReceipts, withoutReceipts)},
+			{Label: "with a receipt", Value: "0 checks", Time: "0.66 s", Cells: barCells(withReceipts, withoutReceipts)},
 		},
+		// Only figures the chart does not already carry, all in seconds so the
+		// page never asks a reader to convert units to compare two numbers.
 		Metrics: []Metric{
-			{Value: "3", Label: "independent checks, started together"},
-			{Value: "38 ms", Label: "from run accepted to all three running"},
+			{Value: "0.04 s", Label: "from run accepted to all three checks running"},
 			{Value: "6.96 s", Label: "in the pinned container, before the first command runs"},
-			{Value: "0.66 s", Label: "whole preflight when every check reuses its proof"},
 		},
-		Note: "The two timings are from one pair of runs on one " +
-			"machine, executing and then reusing the same three checks. Runner checks the original signature, " +
-			"trusted policy, input content, and runtime before skipping lint, unit, or build.",
+		Note: "Both timings are wall clock on one machine, process start to exit, executing and then " +
+			"reusing the same three checks. Runner checks the original signature, trusted policy, input " +
+			"content, and runtime before skipping lint, unit, or build.",
 		Built: time.Now().UTC().Format(time.RFC3339),
 	}
 }
