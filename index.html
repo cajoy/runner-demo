@@ -31,7 +31,9 @@
       var(--bg);
     color: var(--fg);
   }
-  main { max-width: 42rem; padding: 3rem 2rem; }
+  /* Wide enough for the argument to keep its 42rem measure with the aside
+     beside it; the layout collapses before the text column gets narrow. */
+  main { max-width: 64rem; padding: 3rem 2rem; }
 
   .eyebrow { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 0.75rem;
              color: var(--accent); font-size: 0.75rem; font-weight: 600;
@@ -83,6 +85,33 @@
   code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.875em;
          color: var(--accent); }
 
+  /* Two columns above 62rem, one below. The aside is deliberately narrow: it is
+     reference material beside the argument, not a second argument, and more
+     sections are expected under it. */
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 15.5rem;
+            gap: 2.5rem; align-items: start; }
+  .side { font-size: 0.8125rem; line-height: 1.55; color: var(--fg-3);
+          border-left: 1px solid var(--line); padding-left: 1.25rem; }
+  .side + .side { margin-top: 1.6rem; }
+  .side h2 { margin-bottom: 0.55rem; }
+  .side p { margin: 0 0 0.7rem; color: var(--fg-2); }
+  .side dl { margin: 0; display: grid; gap: 0.5rem; }
+  .side dt { color: var(--fg); font-weight: 600; }
+  .side dd { margin: 0.1rem 0 0; }
+  .side ul { margin: 0; padding-left: 1rem; display: grid; gap: 0.45rem; }
+  /* The anatomy is a shape, not a list to read: seven groups, named once. */
+  .groups { display: flex; flex-wrap: wrap; gap: 0.3rem 0.45rem; margin: 0.15rem 0 0;
+            padding: 0; list-style: none; }
+  .groups li { font-size: 0.6875rem; letter-spacing: 0.04em; text-transform: uppercase;
+               color: var(--fg-2); border: 1px solid var(--line); border-radius: 999px;
+               padding: 0.1rem 0.45rem; }
+  .unknown { color: var(--amber); font-weight: 600; }
+
+  @media (max-width: 62rem) {
+    .layout { grid-template-columns: 1fr; gap: 1.75rem; }
+    .side { border-left: 0; border-top: 1px solid var(--line);
+            padding-left: 0; padding-top: 1.25rem; }
+  }
   @media (max-width: 34rem) {
     .ratio-figure { font-size: 3.5rem; }
     .bar { grid-template-columns: 1fr; gap: 0.3rem; }
@@ -92,41 +121,78 @@
 </head>
 <body>
   <main>
-    <p class="eyebrow">Portable CI<i></i></p>
-    <h1>{{.Heading}}</h1>
-    <p class="tagline">{{.Tagline}}</p>
+    <div class="layout">
+      <div class="argument">
+      <p class="eyebrow">Portable CI<i></i></p>
+      <h1>{{.Heading}}</h1>
+      <p class="tagline">{{.Tagline}}</p>
 
-    <section class="ratio">
-      <div class="ratio-figure">{{.Ratio}}</div>
-      <p class="ratio-note">{{.RatioNote}}</p>
-      <p class="punchline">{{.Punchline}}</p>
-    </section>
+      <section class="ratio">
+        <div class="ratio-figure">{{.Ratio}}</div>
+        <p class="ratio-note">{{.RatioNote}}</p>
+        <p class="punchline">{{.Punchline}}</p>
+      </section>
 
-    <p class="lede"><strong class="highlight">Intel says some customers now buy
-       four CPUs for every GPU they order for agentic work.</strong> AMD says
-       the ratio is heading for one to
-       one, and that the demand is additive rather than a shift away from
-       accelerators. Both are describing the orchestration around the model,
-       not the model: a build, a test suite, a container. That work runs just
-       as well on the machine that already has the source, the caches and the
-       warm containers.</p>
+      <p class="lede"><strong class="highlight">Intel says some customers now buy
+         four CPUs for every GPU they order for agentic work.</strong> AMD says
+         the ratio is heading for one to
+         one, and that the demand is additive rather than a shift away from
+         accelerators. Both are describing the orchestration around the model,
+         not the model: a build, a test suite, a container. That work runs just
+         as well on the machine that already has the source, the caches and the
+         warm containers.</p>
 
-    <section class="panel">
-      <h2>{{.Chart}}</h2>
-      {{range .Bars}}
-      <div class="bar">
-        <span class="bar-label">{{.Label}}</span>
-        <span class="bar-track" aria-hidden="true">{{range .Cells}}<i class="{{if .}}on{{end}}"></i>{{end}}</span>
-        <span class="bar-value">{{.Value}}</span>
+      <section class="panel">
+        <h2>{{.Chart}}</h2>
+        {{range .Bars}}
+        <div class="bar">
+          <span class="bar-label">{{.Label}}</span>
+          <span class="bar-track" aria-hidden="true">{{range .Cells}}<i class="{{if .}}on{{end}}"></i>{{end}}</span>
+          <span class="bar-value">{{.Value}}</span>
+        </div>
+        {{end}}
+        <p class="note">{{.Note}}</p>
+      </section>
+
+      <p>Run the preflight workflow locally, then inspect its task receipts and
+         compare the next run. This static preview shows the demo UI and the
+         numbers this page states; it does not certify that this commit has a
+         signed receipt or that CI skipped its tasks. The receipt does that.</p>
       </div>
-      {{end}}
-      <p class="note">{{.Note}}</p>
-    </section>
 
-    <p>Run the preflight workflow locally, then inspect its task receipts and
-       compare the next run. This static preview shows the demo UI and the
-       numbers this page states; it does not certify that this commit has a
-       signed receipt or that CI skipped its tasks. The receipt does that.</p>
+      <aside class="side">
+        <h2>Receipt and signature</h2>
+        <p>A bounded record of one finished run, signed on the machine that produced it.</p>
+        <dl>
+          <dt>Signature</dt>
+          <dd>Ed25519 over the receipt bytes, carrying the signer id that made it.</dd>
+          <dt>Trust</dt>
+          <dd>Policy on protected main pins each signer's public key, scoped to repository, tasks, placement and platform.</dd>
+          <dt>Binding</dt>
+          <dd>Commit, tree and config digest, so proof cannot drift onto other code.</dd>
+          <dt>Integrity</dt>
+          <dd>A digest of immutable receipt bytes, with the time they were created.</dd>
+        </dl>
+      </aside>
+
+      <aside class="side">
+        <h2>Anatomy</h2>
+        <p>Seven groups, so ambiguity has somewhere to be recorded.</p>
+        <ul class="groups">
+          <li>Producer</li><li>Run identity</li><li>Subject</li><li>Outcome</li>
+          <li>Mutation</li><li>Authority</li><li>Integrity</li>
+        </ul>
+      </aside>
+
+      <aside class="side">
+        <h2>What it does not claim</h2>
+        <ul>
+          <li>A terminal outcome for one exact run. Not current runtime health, and not permission to run again.</li>
+          <li>Complete structure is not verification. Signatures, source bytes, policy and runtime are checked by the verifier.</li>
+          <li>A complete envelope can still report an <span class="unknown">unknown</span> outcome, and a consumer has to preserve that uncertainty rather than resolve it.</li>
+        </ul>
+      </aside>
+    </div>
 
     <footer>
       Cool at {{.Built}} · <code>runner run --project . api:preflight</code>
