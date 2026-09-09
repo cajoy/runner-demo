@@ -89,7 +89,7 @@ func TestPageRendersTheRatioAndTheChart(t *testing.T) {
 		}
 	}
 	for _, bar := range page.Bars {
-		if !strings.Contains(body, bar.Label) || !strings.Contains(body, bar.Value) {
+		if !strings.Contains(body, bar.Label) || !strings.Contains(body, bar.Value) || !strings.Contains(body, bar.Time) {
 			t.Fatalf("page is missing bar %q", bar.Label)
 		}
 	}
