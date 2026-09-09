@@ -1,4 +1,4 @@
-name: Verified receipt reuse
+name: CI
 on:
   push:
   pull_request:
@@ -6,32 +6,49 @@ on:
 permissions:
   contents: read
 jobs:
-  verify:
+  ci:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 20
+    container:
+      image: golang:1.27.1-bookworm@sha256:648f440f42a0958804efb24df176f806f9d353b41f1c0627f666428e40310f6b
+    env:
+      GOENV: off
+      GOWORK: off
+      GOTOOLCHAIN: local
+      CGO_ENABLED: "0"
+      GOFLAGS: "-buildvcs=false -trimpath -mod=readonly"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
-        with:
-          go-version-file: go.mod
       - name: Fetch protected policy
+        id: policy
+        continue-on-error: true
         run: git fetch origin main:refs/remotes/origin/main
-      - name: Install pinned Runner
-        run: go run ./cmd/demo-install
-      - name: Verify proof, execute missing checks, and simulate deployment
+      - name: Verify receipts
+        id: receipt
+        if: ${{ steps.policy.outcome == 'success' }}
+        continue-on-error: true
         env:
           RECEIVING_BRANCH: ${{ github.base_ref || github.ref_name }}
-        run: go run ./cmd/demo-ci --runner .runner-ci/bin/runner --branch "$RECEIVING_BRANCH"
+          RECEIPT_IMAGE: golang:1.27.1-bookworm@sha256:648f440f42a0958804efb24df176f806f9d353b41f1c0627f666428e40310f6b
+        run: go run ./cmd/receipt-verify --image "$RECEIPT_IMAGE" --branch "$RECEIVING_BRANCH"
+      - name: lint
+        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified || '[]'), 'lint') }}
+        run: go vet ./...
+      - name: unit
+        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified || '[]'), 'unit') }}
+        run: go test -count=1 -cover ./...
+      - name: build
+        if: ${{ !contains(fromJSON(steps.receipt.outputs.verified || '[]'), 'build') }}
+        run: go build -o .local-ci-out/server .
+      - name: deploy (simulation)
+        run: echo "Simulated deployment. All checks passed or had verified receipts; no application was deployed."
       - name: Preserve verification evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: runner-verification
-          path: |
-            .runner-ci/plan.json
-            .runner-ci/evidence/
-            .runner-ci/final-receipt.json
+          name: receipt-verification
+          path: .runner-ci/verification.json
           if-no-files-found: ignore

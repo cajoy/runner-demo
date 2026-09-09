@@ -10,7 +10,7 @@ The approved existing signer for human and agent runs is local-alex. Actor metad
 
 With repository-local receipt setup, successful eligible runs sign automatically and ordinary `git push` carries code and notes. Do not add manual attach or separate notes-push steps to the normal flow. Respect an actionable guard failure; a concurrent notes merge may require another ordinary push.
 
-Host proof cannot substitute for pinned linux/arm64 proof. Use api-linux:preflight for evidence that the Linux CI verifier can reuse. Missing, expired, revoked, or otherwise ineligible evidence cannot authorize a skip. Malformed or conflicting evidence fails the configured integrity gate.
+Host proof cannot substitute for pinned linux/arm64 proof. Use api-linux:preflight for evidence that the Linux CI verifier can reuse. Missing, expired, revoked, or otherwise ineligible evidence cannot authorize a skip. The standalone GitHub verifier falls back to normal checks for rejected, malformed, or conflicting proof. Runner's own integrity policy still applies to its separate commands.
 
 api:deploy is a local simulation. It must reuse eligible preflight checks, restore the verified binary, and execute the simulation itself. Existing production approval requirements remain in force.
 

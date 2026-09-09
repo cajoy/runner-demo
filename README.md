@@ -56,7 +56,13 @@ runner receipts status --project . --refresh
 
 The Linux workflow uses Docker with a pinned image and linux/arm64 platform. It runs the same three verification commands. Ordinary push carries its notes; Runner makes no second network push. If concurrent notes require a local merge, the guard explains the retry and you run `git push` again.
 
-The GitHub workflow installs the pinned Runner binary, loads policy from the protected main ref, verifies original signatures and content identity, runs any missing checks, and verifies final evidence before printing a simulated deployment. It needs no private signing key. The job summary includes every task, decision, original run, receipt digest, platform, actor, and signing key.
+GitHub runs a receipt-verification step, then ordinary `lint`, `unit`, and `build` steps. The standalone Go verifier in `cmd/receipt-verify` reads policy from the protected main ref and fetches signed Git notes. It verifies signatures, signer scope, proof age, task inputs, and the pinned Linux runtime. Each normal step skips only when its own receipt passes verification. Missing, rejected, malformed, or conflicting proof makes checks run normally. A verifier or notes-fetch failure also runs the checks.
+
+The normal workflow uses Go and Git; it does not install Runner. The job runs in the same pinned Go image as `api-linux:preflight`. Its summary shows a decision for every task and the original run, receipt digest, and signer for reused checks. The uploaded `verification.json` also includes the actor and original proof time. The final `deploy (simulation)` step prints a message after successful checks; it requires no deployment artifact and changes no application.
+
+The receiver supports this demo's three fixed verification commands and Runner's v3 receipts with v2 content identities. Its reviewed workflow, configuration, and task-definition digests live in `internal/receiptverify/contract.go`. Changing the workflow or verification recipe makes CI run fresh until that receiver contract is updated. Source content is recomputed on each checkout, so README-only commits can still reuse proof. Unknown receipt versions run fresh.
+
+Signing happens after a successful eligible `runner run`. The push hook checks delivery of the existing signed notes; it does not run checks or create signatures.
 
 A delivered receipt means the remote has the code and original proof. Receiver verification is a separate step. Offline verification remains useful and reports pending delivery.
 
@@ -77,6 +83,6 @@ go test ./...
 RUNNER_BIN="$PWD/.runner-ci/bin/runner" ./test-cases/run.sh
 ```
 
-The Go harness invokes the real Runner binary and real Go commands in disposable repositories. It checks proof coverage, tampering, expiry, content changes, local artifacts, normal pushes, and verified CI finalization. It never publishes fabricated evidence to this repository.
+`go test ./...` includes standalone-verifier tests for valid, partial, rejected, and missing receipts, content changes, and notes delivery. These tests need no Runner installation. The separate Go dogfood harness invokes the real Runner binary and real Go commands in disposable repositories. Its GitHub workflow, `Runner dogfood (manual)`, runs only when explicitly dispatched; it is not part of normal pushes or pull requests. It checks local signing, artifacts, normal pushes, and Runner's own distributed-CI interfaces without publishing fabricated evidence to this repository.
 
 The workflows preserve production authorization requirements. Portable receipts carry proof; this demo does not transport build artifacts between machines or deploy a production application.

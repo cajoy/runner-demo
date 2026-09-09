@@ -1,7 +1,5 @@
-name: Receipt scenarios
+name: Runner dogfood (manual)
 on:
-  push:
-  pull_request:
   workflow_dispatch:
 permissions:
   contents: read
