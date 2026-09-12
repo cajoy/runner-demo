@@ -1,3 +1,5 @@
+> Update September 12, 2026: the api-linux service was later merged into api. Use `api:preflight` for current runs. The historical commands and results below are unchanged.
+
 # Released verifier rehearsal — 9 September 2026
 
 The demo downloads `runner-receipt-verify` v0.8.29 from [cajoy/runner-dist](https://github.com/cajoy/runner-dist/releases/tag/v0.8.29). Its Go source and tests live in Runner. Normal CI keeps its own lint, unit, build, and simulated deployment steps.

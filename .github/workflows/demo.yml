@@ -30,8 +30,8 @@ jobs:
         id: verifier
         continue-on-error: true
         env:
-          VERIFIER_VERSION: v0.8.29
-          VERIFIER_SHA256: d6b62fbaba18cadc5ac4ca20a31d9f8e8398d319a52a99da70d6ee38c5fb45ec
+          VERIFIER_VERSION: v0.8.34
+          VERIFIER_SHA256: a1d7c16f2559d01eb6a99c1a8ade2c8183f6541f32beca7d0c8c5d59bb2a12a3
         run: |
           mkdir -p .runner-ci
           curl --fail --location --silent --show-error \

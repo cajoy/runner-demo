@@ -16,7 +16,7 @@ export PATH="$PWD/.runner-ci/bin:$PATH"
 runner version
 git fetch origin main:refs/remotes/origin/main
 runner receipts setup --project . --signer local-alex \
-  --policy .runner/receipt-policy.yaml --policy-ref refs/remotes/origin/main
+  --policy .runner/receipt-policy.json --policy-ref refs/remotes/origin/main
 ```
 
 Setup uses the existing `local-alex` signing key. It does not create a key. The demo policy trusts that key for these verification tasks. Another user needs an existing key that the protected policy explicitly trusts.
@@ -66,6 +66,20 @@ The receiver supports this demo's three fixed verification commands and Runner's
 Signing happens after a successful eligible `runner run`. The push hook checks delivery of the existing signed notes; it does not run checks or create signatures.
 
 A delivered receipt means the remote has the code and original proof. Receiver verification is a separate step. Offline verification remains useful and reports pending delivery.
+
+## Maintain the demo
+
+A task with `verification: {kind: go}` must use bare `go test`, `go vet`, or `go build` commands. Shell operators, quoting, redirection, command substitution, external executables, `-exec`, `-toolexec`, `-overlay`, absolute arguments and parent-directory arguments make command coverage unknown. The task still runs, but Runner cannot reuse its proof. `runner config validate` now warns about this before execution. Keep export and formatting commands in separate tasks without `verification`.
+
+After changing `.local-ci` or `.github/workflows/demo.yml`, run `make contract` with the pinned Runner, review the generated digests, and commit both `.runner/receipt-contract*.json` files. Runner computes the task definitions from the current configuration without executing a check. `make check-contract` and CI detect a changed configuration or workflow that was not incorporated into the reviewed contract. Changes to the runtime, environment or policy still require reviewing those fields in the contract.
+
+The Pages deployment contract remains `main:/docs`. Run `make page` after changing `main.go` or `index.html`, and commit `docs/index.html` in the same change. `make check-page` is the freshness gate. CI also runs `make check-format`; use `make format` to correct formatting. These gates run separately from the three reusable verification tasks.
+
+`go run .` serves a local preview on port 8080, including `/healthz`. This is the supported way to inspect the page locally; `go run . -export` renders the same template for Pages. The rounded timings on the page are illustrative figures from the September 9 rehearsal, not a current benchmark.
+
+A run that reuses all checks cites the original signed receipt and its original commit. It does not sign those checks again or attach a new note to the current commit. The push must carry both the code and the original notes. `receipts status` labels its counters as pending observations and confirmations made during that refresh; a zero refresh count does not mean previously delivered proof disappeared.
+
+Git notes use the repository-local Git identity. If Runner reports `receipt_identity_missing`, set `git config --local user.name` and `git config --local user.email` to your own identity. Runner intentionally ignores the global Git configuration for note writes.
 
 ## Human and agent labels
 

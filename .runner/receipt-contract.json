@@ -5,7 +5,7 @@
   "service": "api",
   "config_digest": "sha256:4f8d255c51a67b02f789c3c14236b7514949fa8726efe4bca6581f56f7baa512",
   "workflow_path": ".github/workflows/demo.yml",
-  "workflow_digest": "sha256:fa5876f485809ca9076834593cca335ef9d9870568d7687e25adc186d078fe79",
+  "workflow_digest": "sha256:458b422029db2df430e0f89cfe5f87d81f202d377317d6ca1ead56173ce9a80e",
   "image": "golang:1.27.1-bookworm@sha256:648f440f42a0958804efb24df176f806f9d353b41f1c0627f666428e40310f6b",
   "go_version": "go1.27.1",
   "runtime": {
@@ -29,8 +29,8 @@
     "GOWORK": "off"
   },
   "task_definitions": {
-    "build": "sha256:f17346f8353609fa13413c279b44eec1eb732ecdb43ebb62c163df99335e0d52",
-    "lint": "sha256:f837b0ce1395c8e689fd8e7b0022363e3cd25991aa6147b9726d56dc2a40be1c",
-    "unit": "sha256:b8e4ceaac33eabb4c31dd42ed392ac79cd1643ed22d6627311cb331f33b541aa"
+    "build": "sha256:c3e3b7400afad77edbe14f75158fab84e45272f4322cc0eed6392742896e5a94",
+    "lint": "sha256:38f74e6439b947cc9b53fc1ac953d2256b3830ed417cfb6724302af5d9bf6439",
+    "unit": "sha256:29648f33d1e53b36d2b8df9d758311864ccb9c203ddd4031a5bd89f82b7108b4"
   }
 }
