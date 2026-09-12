@@ -1,0 +1,9 @@
+{
+  "inputs": {
+    ".local-ci/api.yaml": "sha256:2c3eefc565ebf9d5be49bd50de795606f723d10481ba62b1b79a3d5188b27f14",
+    ".local-ci/runner.yaml": "sha256:eee98f548ddd05983ec5d4877d796f153d0a2eb1c07f7f1a4935e673fbbe08db",
+    ".local-ci/toolchain.lock": "sha256:d7c9c4726a81c45838802dd42c34bd44ab0da81bf2f361143841564939a5ef65",
+    ".github/workflows/demo.yml": "sha256:458b422029db2df430e0f89cfe5f87d81f202d377317d6ca1ead56173ce9a80e"
+  },
+  "contract": "sha256:7838fc2bb03422fd8d416176564727f3531d31f29f1f6aad8987b22ca5f07318"
+}

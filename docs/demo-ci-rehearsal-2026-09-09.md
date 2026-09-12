@@ -1,3 +1,5 @@
+> Update September 12, 2026: the api-linux service was later merged into api. Use `api:preflight` for current runs. The historical commands and results below are unchanged.
+
 # Ordinary GitHub CI with signed receipt reuse
 
 The normal demo workflow now runs a standalone Go receipt verifier followed by GitHub Actions `lint`, `unit`, and `build` steps. Each step skips only when its own signed proof passes verification. Missing or rejected proof runs the normal checks. GitHub does not install Runner for this workflow.

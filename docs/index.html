@@ -170,7 +170,7 @@
         
         <div class="beat">
           <p class="beat-verb">Skip.</p>
-          <p>CI runs nothing the proof covers. Not faster checks, absent ones.</p><p>The whole preflight drops from 10.58 s to 0.66 s.</p>
+          <p>CI runs nothing the proof covers. Not faster checks, absent ones.</p><p>The example below shows a fresh run and a run reusing its proof.</p>
           <p class="beat-foot">0 hosted minutes</p>
         </div>
         
@@ -192,12 +192,12 @@
         <dl class="metrics">
           
           <div>
-            <dt class="metric-value">0.04 s</dt>
+            <dt class="metric-value">under 0.1 s</dt>
             <dd class="metric-label">from run accepted to all three checks running</dd>
           </div>
           
           <div>
-            <dt class="metric-value">6.96 s</dt>
+            <dt class="metric-value">about 7 s</dt>
             <dd class="metric-label">in the pinned container, before the first command runs</dd>
           </div>
           
@@ -221,16 +221,16 @@
         <div class="bar">
           <span class="bar-label">without a receipt</span>
           <span class="bar-track" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>
-          <span class="bar-value">3 checks<span class="bar-time">10.58 s</span></span>
+          <span class="bar-value">3 checks<span class="bar-time">about 11 s</span></span>
         </div>
         
         <div class="bar">
           <span class="bar-label">with a receipt</span>
           <span class="bar-track" aria-hidden="true"><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></span>
-          <span class="bar-value">0 checks<span class="bar-time">0.66 s</span></span>
+          <span class="bar-value">0 checks<span class="bar-time">about 1 s</span></span>
         </div>
         
-        <p class="note">Both timings are wall clock on one machine, process start to exit, executing and then reusing the same three checks. Runner checks the original signature, trusted policy, input content, and runtime before skipping lint, unit, or build.</p>
+        <p class="note">Illustrative timings, rounded from the September 9, 2026 rehearsal on one machine. These are not current benchmarks or performance guarantees. Runtime startup and cache restoration vary by host.</p>
       </section>
 
       <p>Run the preflight locally, then run it again: the second run reuses the
@@ -272,7 +272,7 @@
     </div>
 
     <footer>
-      Updated 1 at: 2026-09-09T17:36:00Z · <code>runner run --project . api:preflight</code>
+      Updated 1 at: 2026-09-12T08:59:29Z · <code>runner run --project . api:preflight</code>
     </footer>
   </main>
 </body>

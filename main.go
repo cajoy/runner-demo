@@ -45,9 +45,7 @@ type Beat struct {
 	Foot  string
 }
 
-// Metric is a measured figure. It lives here rather than in the template for
-// the same reason the bars do: the number and the test that asserts it move
-// together, and nothing on the page can claim a timing the code does not state.
+// Metric is a rounded illustration from the dated rehearsal.
 type Metric struct {
 	Value string
 	Label string
@@ -102,23 +100,21 @@ func content() Page {
 			}, Foot: "a dirty tree signs nothing"},
 			{Verb: "Skip.", Lines: []string{
 				"CI runs nothing the proof covers. Not faster checks, absent ones.",
-				"The whole preflight drops from 10.58 s to 0.66 s.",
+				"The example below shows a fresh run and a run reusing its proof.",
 			}, Foot: "0 hosted minutes"},
 		},
 		Chart: "Verification commands in the all-valid demo case",
 		Bars: []Bar{
-			{Label: "without a receipt", Value: "3 checks", Time: "10.58 s", Cells: barCells(withoutReceipts, withoutReceipts)},
-			{Label: "with a receipt", Value: "0 checks", Time: "0.66 s", Cells: barCells(withReceipts, withoutReceipts)},
+			{Label: "without a receipt", Value: "3 checks", Time: "about 11 s", Cells: barCells(withoutReceipts, withoutReceipts)},
+			{Label: "with a receipt", Value: "0 checks", Time: "about 1 s", Cells: barCells(withReceipts, withoutReceipts)},
 		},
 		// Only figures the chart does not already carry, all in seconds so the
 		// page never asks a reader to convert units to compare two numbers.
 		Metrics: []Metric{
-			{Value: "0.04 s", Label: "from run accepted to all three checks running"},
-			{Value: "6.96 s", Label: "in the pinned container, before the first command runs"},
+			{Value: "under 0.1 s", Label: "from run accepted to all three checks running"},
+			{Value: "about 7 s", Label: "in the pinned container, before the first command runs"},
 		},
-		Note: "Both timings are wall clock on one machine, process start to exit, executing and then " +
-			"reusing the same three checks. Runner checks the original signature, trusted policy, input " +
-			"content, and runtime before skipping lint, unit, or build.",
+		Note:  "Illustrative timings, rounded from the September 9, 2026 rehearsal on one machine. These are not current benchmarks or performance guarantees. Runtime startup and cache restoration vary by host.",
 		Built: time.Now().UTC().Format(time.RFC3339),
 	}
 }

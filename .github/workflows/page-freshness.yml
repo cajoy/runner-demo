@@ -23,34 +23,9 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
         with:
           go-version-file: go.mod
-      - name: Compare the published page with the template
-        run: |
-          go run . -export > /tmp/rendered.html
-          # The Built timestamp is stamped at render time, so it always differs.
-          stamp='s/[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}T[0-9:]*Z/TIMESTAMP/g'
-          sed "$stamp" /tmp/rendered.html > /tmp/a.html
-          sed "$stamp" docs/index.html > /tmp/b.html
-          if ! diff -q /tmp/a.html /tmp/b.html >/dev/null; then
-            {
-              echo "### Published page is stale"
-              echo
-              echo 'docs/index.html does not match what `index.html` renders, so'
-              echo 'Pages is serving the previous page. Regenerate it in the same'
-              echo 'commit as the template change:'
-              echo
-              echo '```sh'
-              echo 'go run . -export > docs/index.html'
-              echo '```'
-              echo
-              echo '<details><summary>Difference</summary>'
-              echo
-              echo '```diff'
-              diff -u /tmp/b.html /tmp/a.html | head -40
-              echo '```'
-              echo
-              echo '</details>'
-            } >> "$GITHUB_STEP_SUMMARY"
-            echo "docs/index.html is stale; see the job summary" >&2
-            exit 1
-          fi
-          echo "Published page matches the template." >> "$GITHUB_STEP_SUMMARY"
+      - name: Check generated page
+        run: make check-page
+      - name: Check Go formatting
+        run: make check-format
+      - name: Check receipt contract freshness
+        run: make check-contract
